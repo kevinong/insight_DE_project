@@ -1,14 +1,19 @@
 # Insight Data Engineering Project
 
 ## Introduction
-Using Yelp's dataset to create a dashboard for business owners to analyze the top positive or negative words.
+Create a dashboard for business owners to analyze the top positive or negative words in their reviews using sentiment analysis.
 
-## Dataset
-In total, there are :
-
+## Potential Datasets
+Yelp:
 * 5,200,000 user reviews
 * Information on 174,000 businesses
 * The data spans 11 metropolitan areas
+* ~ 7 GB
+
+Amazon:
+* 142.8 million reviews
+* ~ 20 GB
+
 
 ## Purpose
 Provide insight for business owners so that they can know what are the most positive or negative aspects about their business.
@@ -16,7 +21,6 @@ Provide insight for business owners so that they can know what are the most posi
 ## Technology
 * Python
 * Amazon S3
-* Kafka
 * Spark
 * Redshift
 * Flask
