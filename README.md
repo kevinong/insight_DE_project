@@ -11,17 +11,28 @@ In total, there are :
 * The data spans 11 metropolitan areas
 
 ## Purpose
-Provide insight for business owners
+Provide insight for business owners so that they can know what are the most positive or negative aspects about their business.
 
 ## Technology
 * Python
+* Amazon S3
+* Kafka
+* Spark
+* Redshift
+* Flask
 
 
 ## Proposed Architecture
 ```
- +----------------+        +------------------+        +-----------+        +---------------+
- |                |        |                  |        |           |        |               |
- | Kafka          | -----> | Spark            | -----> | Cassandra | -----> | Flask         |
- | Data Ingestion |        | Batch Processing |        | Database  |        | Web Framework |
- +----------------+        +------------------+        +-----------+        +---------------+
+ +--------------+
+ | Amazon S3    |
+ | Data Storage |
+ +--------------+
+        |
+        |
+        v
+ +------------------+        +-----------+        +---------------+
+ | Spark            | -----> | Redshift  | -----> | Flask         |
+ | Batch Processing |        | Database  |        | Web Framework |
+ +------------------+        +-----------+        +---------------+
 ```
