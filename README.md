@@ -6,6 +6,6 @@ Using Yelp's dataset to create a dashboard for business owners to analyze the to
 ## Dataset
 In total, there are :
 
--5,200,000 user reviews
--Information on 174,000 businesses
--The data spans 11 metropolitan areas
+..5,200,000 user reviews
+..Information on 174,000 businesses
+..The data spans 11 metropolitan areas
