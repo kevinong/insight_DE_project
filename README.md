@@ -18,9 +18,10 @@ Provide insight for business owners
 
 
 ## Proposed Architecture
-
+`
 ------------------        --------------------        -------------        -----------------
 |                |        |                  |        |           |        |               |
 | Kafka          | -----> | Spark            | -----> | Cassandra | -----> | Flask         |
 | Data Ingestion |        | Batch Processing |        | Database  |        | Web Framework |
 ------------------        --------------------        -------------        -----------------
+`
