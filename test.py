@@ -21,9 +21,9 @@ file_name = "metadata.json"
 path = 's3a://{}/{}/{}/'.format(bucket_name, folder_name, file_name)
 
 sqlContext = SQLContext(sc)
-data = sqlContext.jsonFile(path)
+# data = sqlContext.jsonFile(path)
 
-data.printSchema()
-# EC=sqlContext.read.format('json').options(header='true', inferSchema='true').load('s3a://{}/{}/{}/'.format(bucket_name, folder_name, file_name))
+# data.printSchema()
+EC=sqlContext.read.format('json').options(header='true', inferSchema='true').load('s3a://{}/{}/{}/'.format(bucket_name, folder_name, file_name))
 # print(data)
-# print(EC)
+print(EC)
