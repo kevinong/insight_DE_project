@@ -4,6 +4,7 @@ findspark.init()
 import os
 # from pyspark import SparkConf, SparkContext
 import pyspark
+from pyspark.sql import sqlContext
 
 aws_access_key = os.getenv('AWS_ACCESS_KEY_ID', 'default')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY', 'default')
