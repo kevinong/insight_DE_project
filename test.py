@@ -28,5 +28,11 @@ if __name__ == "__main__":
             load(product_path)
 
     print "count: ", df.count()
+    print ''
     print "dtypes: ", df.dtypes
+    print ''
     print "first 5 rows: ", df.head(5)
+    print ''
+
+    books_df = df.where('books'.encode('ascii') in df['categories'][0])
+    print "first 5 book rows", books_df.head(5)
