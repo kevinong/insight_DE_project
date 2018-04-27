@@ -27,6 +27,8 @@ For each product, find the suitable users to provide quality reviews.
 * Finding user "clusters"
 
 
+## Specification/Constraints
+
 ## Proposed Architecture
 ```
  +--------------+
