@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # aws_access_key = os.getenv('AWS_ACCESS_KEY_ID', 'default')
     # aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY', 'default')
     fs = s3fs.S3FileSystem(anon = True)
-    print(fs.ls('s3a://{}/{}/'.format(bucket_name, folder_name)))
+    print(fs.ls('s3a://{}/{}/'.format(BUCKET, folder_name)))
 
     conf = SparkConf().setAppName("test")
     sc = SparkContext(conf = conf)
