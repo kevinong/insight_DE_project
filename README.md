@@ -28,7 +28,7 @@ Find the users related to a certain product, then compute various metrics that i
 ## Primary Engineering Challenges
 * Joining large datasets
 * Design the suitable schema storing the data
-* Finding user "clusters"
+* Finding product "clusters" and related users
 
 
 ## Proposed Architecture
