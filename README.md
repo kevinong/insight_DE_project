@@ -1,5 +1,5 @@
 # Insight Data Engineering Project
-# Recommend users to product
+# Recommend users to products
 
 ## Dataset
 
