@@ -13,6 +13,10 @@ Amazon User Review Data:
 For each product, find the suitable users to provide quality reviews.
 
 
+## Introduction
+Find the users related to a certain product, then compute various metrics that indicates the user's "quality", such as average star rating, helpfulness votes, etc..
+
+
 ## Technology
 * Python
 * Amazon S3
@@ -25,9 +29,6 @@ For each product, find the suitable users to provide quality reviews.
 * Joining large datasets
 * Design the suitable schema storing the data
 * Finding user "clusters"
-
-
-## Specification/Constraints
 
 
 ## Proposed Architecture
