@@ -1,22 +1,17 @@
 # Insight Data Engineering Project
+# Recommend users to product
 
-## Introduction
-Create a dashboard for business owners to analyze the top positive or negative words in their reviews using sentiment analysis.
+## Dataset
 
-## Potential Datasets
-Yelp:
-* 5,200,000 user reviews
-* Information on 174,000 businesses
-* The data spans 11 metropolitan areas
-* ~ 7 GB
-
-Amazon:
+Amazon User Review Data:
 * 142.8 million reviews
-* ~ 20 GB
+* 9 millions products
+* 1.4 million answered questions
 
 
 ## Purpose
-Provide insight for business owners so that they can know what are the most positive or negative aspects about their business.
+For each product, find the suitable users to provide quality reviews.
+
 
 ## Technology
 * Python
@@ -24,6 +19,12 @@ Provide insight for business owners so that they can know what are the most posi
 * Spark
 * Redshift
 * Flask
+
+
+## Primary Engineering Challenges
+* Joining large datasets
+* Design the suitable schema storing the data
+* Finding user "clusters"
 
 
 ## Proposed Architecture
