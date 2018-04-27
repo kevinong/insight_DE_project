@@ -36,15 +36,15 @@ if __name__ == "__main__":
     print ''
     print "prod dtypes: ", product_df.dtypes
     print ''
-    print "first 5 rows (prod): ", product_df.head(5)
+    print "first 5 rows (prod): ", product_df.show(5)
     print ''
 
     print "qa count: ", qa_df.count()
     print ''
     print "qa dtypes: ", qa_df.dtypes
     print ''
-    print "first 5 rows (qa): ", qa_df.head(5)
+    print "first 5 rows (qa): ", qa_df.show(5)
     print ''
 
-    
+
 
