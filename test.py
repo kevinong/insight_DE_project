@@ -4,6 +4,7 @@ findspark.init()
 import os
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext
+import s3fs
 
 BUCKET = "amazon-data-insight"
 
@@ -15,6 +16,8 @@ if __name__ == "__main__":
 
     # aws_access_key = os.getenv('AWS_ACCESS_KEY_ID', 'default')
     # aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY', 'default')
+    fs = s3fs.S3FileSystem(anon = True)
+    print(fs.ls(BUCKET + '/qa'))
 
     conf = SparkConf().setAppName("test")
     sc = SparkContext(conf = conf)
