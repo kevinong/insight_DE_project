@@ -32,19 +32,21 @@ if __name__ == "__main__":
             options(header='true', inferSchema='true').\
             load(qa_path)
 
-    print "prod count: ", product_df.count()
+    print "prod count: \n", product_df.count()
     print ''
-    print "prod dtypes: ", product_df.dtypes
+    print "prod dtypes: \n", product_df.dtypes
     print ''
-    print "first 5 rows (prod): ", product_df.show(5)
-    print ''
-
-    print "qa count: ", qa_df.count()
-    print ''
-    print "qa dtypes: ", qa_df.dtypes
-    print ''
-    print "first 5 rows (qa): ", qa_df.show(5)
+    print "first 5 rows (prod): \n", product_df.show(5)
     print ''
 
+    print "qa count: \n", qa_df.count()
+    print ''
+    print "qa dtypes: \n", qa_df.dtypes
+    print ''
+    print "first 5 rows (qa): \n", qa_df.show(5)
+    print ''
+
+    print "Group by product: "
+    print qa_df.groupby("asin").count().show()
 
 
