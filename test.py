@@ -5,23 +5,28 @@ import os
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext
 
-aws_access_key = os.getenv('AWS_ACCESS_KEY_ID', 'default')
-aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY', 'default')
+BUCKET = "amazon-data-insight"
 
-conf = SparkConf().setAppName("test")
-sc = SparkContext(conf = conf)
+def get_s3_path(bucket_name, folder_name, file_name):
+    return 's3a://{}/{}/{}/'.format(bucket_name, folder_name, file_name)
 
-bucket_name = "amazon-data-insight"
-folder_name = "product"
-file_name = "metadata.json"
-path = 's3a://{}/{}/{}/'.format(bucket_name, folder_name, file_name)
 
-sqlContext = SQLContext(sc)
+if __name__ == "__main__":
 
-df = sqlContext.read.format('json').\
-        options(header='true', inferSchema='true').\
-        load(path)
+    # aws_access_key = os.getenv('AWS_ACCESS_KEY_ID', 'default')
+    # aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY', 'default')
 
-print "count: ", df.count()
-print "dtypes: ", df.dtypes
-print "first 5 rows: ", df.head(5)
+    conf = SparkConf().setAppName("test")
+    sc = SparkContext(conf = conf)
+
+    product_path = get_s3_path(BUCKET, "product", "metadata.json")
+
+    sqlContext = SQLContext(sc)
+
+    df = sqlContext.read.format('json').\
+            options(header='true', inferSchema='true').\
+            load(product_path)
+
+    print "count: ", df.count()
+    print "dtypes: ", df.dtypes
+    print "first 5 rows: ", df.head(5)
