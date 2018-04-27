@@ -22,6 +22,6 @@ df = sqlContext.read.format('json').\
         options(header='true', inferSchema='true').\
         load(path)
 
-print("count: ", df.count())
-print("dtypes: ", df.dtypes)
-print("first row: ", df.first())
+print "count: ", df.count()
+print "dtypes: ", df.dtypes
+print "first 5 rows: ", df.head(5)
