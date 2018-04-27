@@ -20,19 +20,31 @@ if __name__ == "__main__":
     sc = SparkContext(conf = conf)
 
     product_path = get_s3_path(BUCKET, "product", "metadata.json")
+    qa_path = get_s3_path(BUCKET, 'qa', 'qa_Appliances.json')
 
     sqlContext = SQLContext(sc)
 
-    df = sqlContext.read.format('json').\
+    product_df = sqlContext.read.format('json').\
             options(header='true', inferSchema='true').\
             load(product_path)
 
-    print "count: ", df.count()
+    qa_df = sqlContext.read.format('json').\
+            options(header='true', inferSchema='true').\
+            load(qa_path)
+
+    print "prod count: ", product_df.count()
     print ''
-    print "dtypes: ", df.dtypes
+    print "prod dtypes: ", product_df.dtypes
     print ''
-    print "first 5 rows: ", df.head(5)
+    print "first 5 rows (prod): ", product_df.head(5)
     print ''
 
-    books_df = df.where('books'.encode('ascii') in df['categories'][0])
-    print "first 5 book rows", books_df.head(5)
+    print "qa count: ", qa_df.count()
+    print ''
+    print "qa dtypes: ", qa_df.dtypes
+    print ''
+    print "first 5 rows (qa): ", qa_df.head(5)
+    print ''
+
+    
+
