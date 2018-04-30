@@ -3,7 +3,7 @@ findspark.init()
 
 # import os
 from pyspark import SparkConf, SparkContext
-from pyspark.sql import SQLContext
+from pyspark.sql import SQLContext, functions as F
 
 # from boto.s3.connection import S3Connection
 
@@ -76,12 +76,14 @@ if __name__ == "__main__":
     print "first 5 rows (reviews): \n", reviews_df.show(20)
 
     # print "group by users: \n", 
-    grouped = reviews_df.groupby("reviewerID")
+    # grouped = reviews_df.groupby("reviewerID")
     # print "grouped: \n", grouped.show(20)
 
     print "agg \n"
 
     print grouped.agg({"overall": "avg", "overall": "max", "overall": "min", "overall": "count"}).show(20)
+    print reviews_df.groupby("reviewerID").agg(reviews_df.reviewerID, F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
+
 
 
 
