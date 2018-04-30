@@ -1,9 +1,8 @@
 import findspark
 findspark.init()
-
-# import os
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions as F
+from textblob import TextBlob
 
 # from boto.s3.connection import S3Connection
 
@@ -82,7 +81,7 @@ if __name__ == "__main__":
     print "agg \n"
 
     # print grouped.agg({"overall": "avg", "overall": "max", "overall": "min", "overall": "count"}).show(20)
-    print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
+    print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall"), F.sum("helpful")).show(50)
 
 
 
