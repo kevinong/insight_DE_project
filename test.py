@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # print "Group by product: "
     # print qa_df.groupby("asin").count().show()
 
-    print "first 5 rows (reviews): \n", reviews_df.show(20)
+    # print "first 5 rows (reviews): \n", reviews_df.show(20)
 
     print reviews_df.dtypes
 
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     print "agg \n"
 
     # print grouped.agg({"overall": "avg", "overall": "max", "overall": "min", "overall": "count"}).show(20)
-    print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall"), F.sum("helpful")).show(50)
+    # print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall"), F.sum("helpful")).show(50)
 
 
 
