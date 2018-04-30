@@ -73,5 +73,7 @@ if __name__ == "__main__":
 
     print "first 5 rows (reviews): \n", reviews_df.show(20)
 
+    print "group by users: \n", reviews_df.groupby("reviewerID").show(30)
+
 
 
