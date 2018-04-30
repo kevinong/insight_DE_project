@@ -77,11 +77,11 @@ if __name__ == "__main__":
 
     # print "group by users: \n", 
     grouped = reviews_df.groupby("reviewerID")
-    print grouped
+    print "grouped: \n", grouped.show(20)
 
     print "agg \n"
 
-    print grouped.agg({"overall": "avg", "overall": "max", "overall": "min", "overall": "count"})
+    print grouped.agg({"overall": "avg", "overall": "max", "overall": "min", "overall": "count"}).show(20)
 
 
 
