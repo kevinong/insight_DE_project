@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     product_path = get_s3_path(BUCKET, "product", "metadata.json")
     qa_path = get_s3_path(BUCKET, 'qa', 'qa_Appliances.json')
-    review_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
+    reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
 
     sqlContext = SQLContext(sc)
 
