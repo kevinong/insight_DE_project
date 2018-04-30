@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
     # print "group by users: \n", 
     grouped = reviews_df.groupby("reviewerID")
-    print "grouped: \n", grouped.show(20)
+    # print "grouped: \n", grouped.show(20)
 
     print "agg \n"
 
