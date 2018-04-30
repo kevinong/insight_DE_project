@@ -24,6 +24,7 @@ if __name__ == "__main__":
 
     product_path = get_s3_path(BUCKET, "product", "metadata.json")
     qa_path = get_s3_path(BUCKET, 'qa', 'qa_Appliances.json')
+    review_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
 
     sqlContext = SQLContext(sc)
 
@@ -34,6 +35,10 @@ if __name__ == "__main__":
     qa_df = sqlContext.read.format('json').\
             options(header='true', inferSchema='true').\
             load(qa_path)
+
+    reviews_df = sqlContext.read.format('json').\
+            options(header='true', inferSchema='true').\
+            load(reviews_path)
 
     print "prod count: \n", product_df.count()
     print ''
@@ -51,5 +56,8 @@ if __name__ == "__main__":
 
     print "Group by product: "
     print qa_df.groupby("asin").count().show()
+
+    print "first 5 rows (reviews): \n", reviews_df.show(5)
+
 
 
