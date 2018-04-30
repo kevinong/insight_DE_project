@@ -74,6 +74,8 @@ if __name__ == "__main__":
 
     print "first 5 rows (reviews): \n", reviews_df.show(20)
 
+    print reviews_df.dtypes
+
     # print "group by users: \n", 
     # grouped = reviews_df.groupby("reviewerID")
     # print "grouped: \n", grouped.show(20)
