@@ -86,7 +86,7 @@ if __name__ == "__main__":
     print "agg \n"
 
     # print grouped.agg({"overall": "avg", "overall": "max", "overall": "min", "overall": "count"}).show(20)
-    print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall"), F.add_tuple_udf("helpful")).show(50)
+    print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall"), add_tuple_udf("helpful")).show(50)
 
 
 
