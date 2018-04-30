@@ -19,6 +19,8 @@ def get_s3_path(bucket_name, folder_name=None, file_name=None):
 
     return path
 
+def add_tuple(tup):
+    return tup[0] + tup[1]
 
 if __name__ == "__main__":
 
@@ -40,6 +42,7 @@ if __name__ == "__main__":
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
     reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Books_5.json')
 
+    add_tuple_udf = F.udf(add_tuple)
 
     sqlContext = SQLContext(sc)
 
@@ -83,7 +86,7 @@ if __name__ == "__main__":
     print "agg \n"
 
     # print grouped.agg({"overall": "avg", "overall": "max", "overall": "min", "overall": "count"}).show(20)
-    # print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall"), F.sum("helpful")).show(50)
+    print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall"), F.add_tuple_udf("helpful")).show(50)
 
 
 
