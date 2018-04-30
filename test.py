@@ -1,9 +1,9 @@
-# import findspark
-# findspark.init()
+import findspark
+findspark.init()
 
 # import os
-# from pyspark import SparkConf, SparkContext
-# from pyspark.sql import SQLContext
+from pyspark import SparkConf, SparkContext
+from pyspark.sql import SQLContext
 
 # from boto.s3.connection import S3Connection
 
