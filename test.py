@@ -38,7 +38,9 @@ if __name__ == "__main__":
 
     product_path = get_s3_path(BUCKET, "product", "metadata.json")
     qa_path = get_s3_path(BUCKET, 'qa', 'qa_Appliances.json')
-    reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
+    # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
+    reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Books_5.json')
+
 
     sqlContext = SQLContext(sc)
 
@@ -73,7 +75,15 @@ if __name__ == "__main__":
 
     print "first 5 rows (reviews): \n", reviews_df.show(20)
 
-    print "group by users: \n", reviews_df.groupby("reviewerID").show(30)
+    # print "group by users: \n", 
+    grouped = reviews_df.groupby("reviewerID")
+    print grouped
+
+    print "agg \n"
+
+    print grouped.agg({"overall": "avg", "overall": "max", "overall": "min", "overall": "count"})
+
+
 
 
 
