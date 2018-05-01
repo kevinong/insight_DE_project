@@ -44,6 +44,8 @@ if __name__ == "__main__":
 
     reviews_rdd = sc.textfile(reviews_path)
 
+    print reviews_rdd.take(10)
+
     # sqlContext = SQLContext(sc)
 
     # add_tuple_udf = F.udf(add_tuple)
