@@ -70,7 +70,7 @@ if __name__ == "__main__":
     # print reviews_df.groupby("reviewerID").agg(F.avg("helpful"), F.min("helpful"), F.max("helpful"), F.count("helpful"),).show(50)
 
     # reviews_df = reviews_df.withColumn("reviewText", TextBlob(reviews_df.reviewText).sentiment.polarity)
-    df['sentiment'] = df['reviewText'].apply(lambda review: TextBlob(review).sentiment.polarity)
+    reviews_df['sentiment'] = reviews_df['reviewText'].apply(lambda review: TextBlob(review).sentiment.polarity)
     print reviews_df.show(10)
     print reviews_df.groupby("reviewerID").agg(F.avg("sentiment"), F.min("sentiment"), F.max("sentiment"), F.count("sentiment")).show(50)
 
