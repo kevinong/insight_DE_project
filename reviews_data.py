@@ -33,7 +33,7 @@ class ReviewsData:
 
     def main(self):
         # sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment, FloatType())
-        sentiment_udf = functions.udf(lambda reviewText: sent_udf(reviewText), ArrayType())
+        sentiment_udf = functions.udf(lambda reviewText: sent_udf(reviewText), ArrayType(FloatType()))
 
         # subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
 
