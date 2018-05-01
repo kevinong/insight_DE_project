@@ -43,7 +43,6 @@ class ReviewsData:
 
         # Transforming review data
         self.reviews_df = self.reviews_df\
-                            # .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))\
                             .withColumn("polarity", polarity_udf(self.reviews_df.reviewText))\
                             .withColumn("subjectivity", subjectivity_udf(self.reviews_df.reviewText))\
                             .withColumn("helpful", self.reviews_df.helpful[0] - self.reviews_df.helpful[1])
