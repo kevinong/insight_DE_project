@@ -42,8 +42,8 @@ class ReviewsData:
         # subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.subjectivity_udf, FloatType())
 
         # Transforming review data
-        self.reviews_df = self.reviews_df \
-                            .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))
+        self.reviews_df = self.reviews_df\
+                            .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))\
                             .withColumn("polarity", self.reviews_df_sentiment[0])\
                             .withColumn("subjectivity", self.reviews_df_sentiment[1])\
                             .withColumn("helpful", self.reviews_df.helpful[0] - self.reviews_df.helpful[1])
