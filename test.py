@@ -42,9 +42,9 @@ if __name__ == "__main__":
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
     reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Books_5.json')
 
-    add_tuple_udf = F.udf(add_tuple)
-
     sqlContext = SQLContext(sc)
+
+    add_tuple_udf = F.udf(add_tuple)
 
     # product_df = sqlContext.read.format('json').\
     #         options(header='true', inferSchema='true').\
@@ -85,8 +85,10 @@ if __name__ == "__main__":
 
     print "agg \n"
 
-    # print grouped.agg({"overall": "avg", "overall": "max", "overall": "min", "overall": "count"}).show(20)
-    print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall"), add_tuple_udf("helpful")).show(50)
+    print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
+
+    print reviews_df.select("reviewerID", "helpful")
+    print reviews_df.select("reviewerID", "helpful").show(20)
 
 
 
