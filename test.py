@@ -42,9 +42,11 @@ if __name__ == "__main__":
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
     reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Books_5.json')
 
-    sqlContext = SQLContext(sc)
+    reviews_rdd = sc.textfile(reviews_path)
 
-    add_tuple_udf = F.udf(add_tuple)
+    # sqlContext = SQLContext(sc)
+
+    # add_tuple_udf = F.udf(add_tuple)
 
     # product_df = sqlContext.read.format('json').\
     #         options(header='true', inferSchema='true').\
@@ -54,9 +56,9 @@ if __name__ == "__main__":
     #         options(header='true', inferSchema='true').\
     #         load(qa_path)
 
-    reviews_df = sqlContext.read.format('json').\
-            options(header='true', inferSchema='true').\
-            load(reviews_path)
+    # reviews_df = sqlContext.read.format('json').\
+    #         options(header='true', inferSchema='true').\
+    #         load(reviews_path)
 
     # print "prod count: \n", product_df.count()
     # print ''
@@ -77,18 +79,18 @@ if __name__ == "__main__":
 
     # print "first 5 rows (reviews): \n", reviews_df.show(20)
 
-    print reviews_df.dtypes
+    # print reviews_df.dtypes
 
     # print "group by users: \n", 
     # grouped = reviews_df.groupby("reviewerID")
     # print "grouped: \n", grouped.show(20)
 
-    print "agg \n"
+    # print "agg \n"
 
     # print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
 
-    print reviews_df.select("reviewerID", "helpful") # returns a dataframe
-    print reviews_df.select("reviewerID", "helpful").rdd.map(lambda x: x.split(' '))
+    # print reviews_df.select("reviewerID", "helpful") # returns a dataframe
+    # print reviews_df.select("reviewerID", "helpful").rdd.map(lambda x: x.split(' '))
 
 
 
