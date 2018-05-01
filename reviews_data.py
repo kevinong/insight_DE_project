@@ -4,6 +4,7 @@ from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions
 from pyspark.sql.types import FloatType, ArrayType
 from textblob import TextBlob
+import datetime
 
 # from boto.s3.connection import S3Connection
 
@@ -35,6 +36,8 @@ class ReviewsData:
         # sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment, FloatType())
         # sentiment_udf = functions.udf(lambda reviewText: sentiment(reviewText), ArrayType(FloatType()))
 
+        print "start time: ", datetime.datetime.now()
+
         polarity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
         subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
 
@@ -43,12 +46,15 @@ class ReviewsData:
         # polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.polarity, FloatType())
         # subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.subjectivity_udf, FloatType())
 
+        print "start transform 1: ", datetime.datetime.now()
         # Transforming review data
         self.reviews_df = self.reviews_df\
                             .withColumn("polarity", polarity_udf(self.reviews_df.reviewText))\
                             .withColumn("subjectivity", subjectivity_udf(self.reviews_df.reviewText))\
                             .withColumn("helpful_vote", self.reviews_df.helpful[0])\
                             .withColumn("unhelpful_vote", self.reviews_df.helpful[1])
+
+        print "start transfrom 2: ", datetime.datetime.now()
 
         self.reviews_df = self.reviews_df\
                             .withColumn("pos_polarity", pos_polarity_udf(self.reviews_df.polarity))\
@@ -72,7 +78,7 @@ class ReviewsData:
         #                                                        functions.sum("pos_polarity"), \
         #                                                        functions.sum("neg_polarity"))
 
-
+        print 'transformation done: ', datetime.datetime.now()
         print self.reviews_df.show(5)
 
 
