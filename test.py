@@ -65,11 +65,11 @@ if __name__ == "__main__":
 
     # print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
 
-    reviews_df = reviews_df.withColumn("helpful", reviews_df.helpful[0] - reviews_df.helpful[1])
-    print reviews_df.show(10)
-    print reviews_df.groupby("reviewerID").agg(F.avg("helpful"), F.min("helpful"), F.max("helpful"), F.count("helpful"),).show(50)
+    # reviews_df = reviews_df.withColumn("helpful", reviews_df.helpful[0] - reviews_df.helpful[1])
+    # print reviews_df.show(10)
+    # print reviews_df.groupby("reviewerID").agg(F.avg("helpful"), F.min("helpful"), F.max("helpful"), F.count("helpful"),).show(50)
 
-    reviews_df = reviews_df.withColumn("reviewText", TextBlob(reviews_df.reviewsText).sentiment.polarity)
+    reviews_df = reviews_df.withColumn("reviewText", TextBlob(reviews_df.reviewText).sentiment.polarity)
     print reviews_df.show(10)
     print reviews_df.groupby("reviewerID").agg(F.avg("reviewText"), F.min("reviewText"), F.max("reviewText"), F.count("reviewText")).show(50)
 
