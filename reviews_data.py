@@ -28,7 +28,7 @@ class ReviewsData:
             load(path)
 
     def main(self):
-        sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment, ArrayType())
+        sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
 
         polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.polarity, FloatType())
         subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.subjectivity_udf, FloatType())
