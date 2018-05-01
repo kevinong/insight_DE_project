@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
     reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Books_5.json')
 
-    # sqlContext = SQLContext(sc)
+    sqlContext = SQLContext(sc)
 
     # add_tuple_udf = F.udf(add_tuple)
 
