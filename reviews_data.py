@@ -29,12 +29,15 @@ class ReviewsData:
 
     def main(self):
         sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
+        subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
 
-        polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.polarity, FloatType())
-        subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.subjectivity_udf, FloatType())
+
+        # polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.polarity, FloatType())
+        # subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.subjectivity_udf, FloatType())
 
         self.reviews_df = self.reviews_df \
-                            .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))
+                            .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))\
+                            .withColumn("subjectivity", subjectivity_udf(self.reviews_df.reviewText))
                             # .withColumn("polarity", self) \
                             # .withColumn("subjectivity_udf", subjectivity_udf)
 
