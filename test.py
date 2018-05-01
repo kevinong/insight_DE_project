@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
     reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Books_5.json')
 
-    reviews_rdd = sc.textfile(reviews_path)
+    reviews_rdd = sc.textFile(reviews_path)
 
     print reviews_rdd.take(10)
 
