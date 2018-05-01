@@ -2,7 +2,7 @@ import findspark
 findspark.init()
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions
-from pyspark.sql.types import FloatType
+from pyspark.sql.types import FloatType, ArrayType
 from textblob import TextBlob
 
 # from boto.s3.connection import S3Connection
@@ -28,11 +28,18 @@ class ReviewsData:
             load(path)
 
     def main(self):
-        sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
-        subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
-        self.reviews_df = self.reviews_df.withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))
+        sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment, ArrayType())
 
-        self.reviews_df.show(10)
+        polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment[0], FloatType())
+        subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment[1], FloatType())
+
+        self.reviews_df = self.reviews_df
+                            .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))
+                            .withColumn("polarity", polarity_udf)
+                            .withColumn("subjectivity_udf", subjectivity_udf)
+
+
+        print self.reviews_df.show(10)
 
 
 
