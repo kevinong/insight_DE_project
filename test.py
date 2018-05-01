@@ -2,7 +2,7 @@ import findspark
 findspark.init()
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions as F
-from pyspark.sql.types import StringType
+# from pyspark.sql.types import StringType
 from textblob import TextBlob
 
 # from boto.s3.connection import S3Connection
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     print "agg \n"
 
-    sentiment_udf = F.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, StringType)
+    sentiment_udf = F.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, "FloatType")
 
     # print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
 
