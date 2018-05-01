@@ -38,15 +38,19 @@ class ReviewsData:
         polarity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
         subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
 
-
+        pos_polarity_udf = functions.udf(lambda pol: pol if pol > 0 else 0, FloatType())
+        neg_polarity_udf = functions.udf(lambda pol: pol if pol < 0 else 0, FloatType())
         # polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.polarity, FloatType())
         # subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.subjectivity_udf, FloatType())
 
         # Transforming review data
         self.reviews_df = self.reviews_df\
                             .withColumn("polarity", polarity_udf(self.reviews_df.reviewText))\
+                            .withColumn("pos_polarity", pos_polarity_udf(self.reviews_df.polarity))\
+                            .withColumn("neg_polarity", neg_polarity_udf(self.reviews_df.polarity))\
                             .withColumn("subjectivity", subjectivity_udf(self.reviews_df.reviewText))\
-                            .withColumn("helpful", self.reviews_df.helpful[0] - self.reviews_df.helpful[1])
+                            .withColumn("helpful_vote", self.reviews_df.helpful[0])\
+                            .withColumn("unhelpful_vote", self.reviews_df.helpful[1])
 
                             # .withColumn("polarity", self.reviews_df.sentiment[0])\
                             # .withColumn("subjectivity", self.reviews_df.sentiment[1])\
@@ -56,6 +60,12 @@ class ReviewsData:
 
         # self.reviews_df = self.reviews_df.withColumn("polarity", self.reviews_df.sentiment[0])\
                             # .withColumn("subjectivity", self.reviews_df.sentiment[1])
+
+        # grouped_df = self.reviews_df.groupby("reviewerID").agg(functions.avg("overall"), \
+        #                                                        functions.sum("helpful_vote"), \
+        #                                                        functions.sum("unhelpful_vote"), \
+        #                                                        functions.avg("polarity"), \
+        #                                                        functions.avg(""))
 
 
         print self.reviews_df.show(20)
