@@ -69,7 +69,7 @@ class ReviewsData:
         #                                                        functions.sum("neg_polarity"))
 
 
-        print self.reviews_df.show(20)
+        print self.reviews_df.show(5)
 
 
 
