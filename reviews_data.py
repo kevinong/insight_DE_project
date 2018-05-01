@@ -33,17 +33,19 @@ class ReviewsData:
 
     def main(self):
         # sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment, FloatType())
-        sentiment_udf = functions.udf(lambda reviewText: sentiment(reviewText), ArrayType(FloatType()))
+        # sentiment_udf = functions.udf(lambda reviewText: sentiment(reviewText), ArrayType(FloatType()))
 
         # subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
 
 
-        # polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.polarity, FloatType())
-        # subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.subjectivity_udf, FloatType())
+        polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.polarity, FloatType())
+        subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.subjectivity_udf, FloatType())
 
         # Transforming review data
         self.reviews_df = self.reviews_df\
-                            .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))\
+                            # .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))\
+                            .withColumn("polarity", polarity_udf(self.reviews_df.reviewText))\
+                            .withColumn("subjectivity", subjectivity_udf(self.reviews_df.reviewText))\
                             .withColumn("helpful", self.reviews_df.helpful[0] - self.reviews_df.helpful[1])
 
                             # .withColumn("polarity", self.reviews_df.sentiment[0])\
@@ -52,8 +54,8 @@ class ReviewsData:
                             # .withColumn("polarity", self) \
                             # .withColumn("subjectivity_udf", subjectivity_udf)
 
-        self.reviews_df = self.reviews_df.withColumn("polarity", self.reviews_df.sentiment[0])\
-                            .withColumn("subjectivity", self.reviews_df.sentiment[1])
+        # self.reviews_df = self.reviews_df.withColumn("polarity", self.reviews_df.sentiment[0])\
+                            # .withColumn("subjectivity", self.reviews_df.sentiment[1])
 
 
         print self.reviews_df.show(20)
