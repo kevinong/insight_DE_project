@@ -46,12 +46,15 @@ class ReviewsData:
         # Transforming review data
         self.reviews_df = self.reviews_df\
                             .withColumn("polarity", polarity_udf(self.reviews_df.reviewText))\
-                            .withColumn("pos_polarity", pos_polarity_udf(functions.col("polarity")))\
-                            .withColumn("neg_polarity", neg_polarity_udf(functions.col("polarity")))\
+                            # .withColumn("pos_polarity", pos_polarity_udf(functions.col("polarity")))\
+                            # .withColumn("neg_polarity", neg_polarity_udf(functions.col("polarity")))\
                             .withColumn("subjectivity", subjectivity_udf(self.reviews_df.reviewText))\
                             .withColumn("helpful_vote", self.reviews_df.helpful[0])\
                             .withColumn("unhelpful_vote", self.reviews_df.helpful[1])
 
+        self.reviews_df = self.reviews_df\
+                            .withColumn("pos_polarity", pos_polarity_udf(self.reviews_df.polarity))\
+                            .withColumn("neg_polarity", neg_polarity_udf(self.reviews_df.polarity))
                             # .withColumn("polarity", self.reviews_df.sentiment[0])\
                             # .withColumn("subjectivity", self.reviews_df.sentiment[1])\
                             # .withColumn("helpful", self.reviews_df.helpful[0] - self.reviews_df.helpful[1])
