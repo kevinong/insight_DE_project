@@ -22,6 +22,12 @@ def get_s3_path(bucket_name, folder_name=None, file_name=None):
 def add_tuple(tup):
     return tup[0] + tup[1]
 
+def sentiment_calc(text):
+    try:
+        return TextBlob(text).sentiment.polarity
+    except:
+        return None
+
 if __name__ == "__main__":
 
     # aws_access_key = os.getenv('AWS_ACCESS_KEY_ID', 'default')
@@ -70,7 +76,8 @@ if __name__ == "__main__":
     # print reviews_df.groupby("reviewerID").agg(F.avg("helpful"), F.min("helpful"), F.max("helpful"), F.count("helpful"),).show(50)
 
     # reviews_df = reviews_df.withColumn("reviewText", TextBlob(reviews_df.reviewText).sentiment.polarity)
-    reviews_df['sentiment'] = reviews_df['reviewText'].apply(lambda review: TextBlob(review).sentiment.polarity)
+    # reviews_df['sentiment'] = reviews_df['reviewText'].apply(lambda review: TextBlob(review).sentiment.polarity)
+    reviews_df['sentiment'] = reviews_df['reviewText'].apply(sentiment_calc)
     print reviews_df.show(10)
     print reviews_df.groupby("reviewerID").agg(F.avg("sentiment"), F.min("sentiment"), F.max("sentiment"), F.count("sentiment")).show(50)
 
