@@ -33,9 +33,9 @@ class ReviewsData:
         polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment[0], FloatType())
         subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment[1], FloatType())
 
-        self.reviews_df = self.reviews_df
-                            .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))
-                            .withColumn("polarity", polarity_udf)
+        self.reviews_df = self.reviews_df \
+                            .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText)) \
+                            .withColumn("polarity", polarity_udf) \
                             .withColumn("subjectivity_udf", subjectivity_udf)
 
 
