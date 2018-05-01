@@ -20,6 +20,10 @@ def get_s3_path(bucket_name, folder_name=None, file_name=None):
 
     return path
 
+def sent_udf(reviewText):
+    sentiment = TextBlob(reviewText).sentiment
+    return (sentiment.polarity, sentiment.subjectivity)
+
 class ReviewsData:
     def __init__(self, path, conf, sc):
         sqlContext = SQLContext(sc)
@@ -28,8 +32,10 @@ class ReviewsData:
             load(path)
 
     def main(self):
-        sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
-        subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
+        # sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment, FloatType())
+        sentiment_udf = functions.udf(lambda reviewText: sent_udf(reviewText), ArrayType())
+
+        # subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
 
 
         # polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.polarity, FloatType())
@@ -37,9 +43,9 @@ class ReviewsData:
 
         # Transforming review data
         self.reviews_df = self.reviews_df \
-                            .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))\
-                            .withColumn("subjectivity", subjectivity_udf(self.reviews_df.reviewText))\
-                            .withColumn("helpful", self.reviews_df.helpful[0] - self.reviews_df.helpful[1])
+                            .withColumn("sentiment", sentiment_udf(self.reviews_df.reviewText))
+                            # .withColumn("subjectivity", subjectivity_udf(self.reviews_df.reviewText))\
+                            # .withColumn("helpful", self.reviews_df.helpful[0] - self.reviews_df.helpful[1])
                             # .withColumn("polarity", self) \
                             # .withColumn("subjectivity_udf", subjectivity_udf)
 
