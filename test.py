@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
 
     new_df = reviews_df.withColumn("helpful", reviews_df.helpful[0] - reviews_df.helpful[1])
-    print new_df.groupby("reviewerID").show(10)
+    print new_df.show(10)
 
 
 
