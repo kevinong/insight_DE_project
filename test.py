@@ -42,10 +42,6 @@ if __name__ == "__main__":
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
     reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Books_5.json')
 
-    reviews_rdd = sc.textFile(reviews_path)
-
-    print reviews_rdd.take(10)
-
     # sqlContext = SQLContext(sc)
 
     # add_tuple_udf = F.udf(add_tuple)
@@ -58,42 +54,19 @@ if __name__ == "__main__":
     #         options(header='true', inferSchema='true').\
     #         load(qa_path)
 
-    # reviews_df = sqlContext.read.format('json').\
-    #         options(header='true', inferSchema='true').\
-    #         load(reviews_path)
+    reviews_df = sqlContext.read.format('json').\
+            options(header='true', inferSchema='true').\
+            load(reviews_path)
 
-    # print "prod count: \n", product_df.count()
-    # print ''
-    # print "prod dtypes: \n", product_df.dtypes
-    # print ''
-    # print "first 5 rows (prod): \n", product_df.show(5)
-    # print ''
 
-    # print "qa count: \n", qa_df.count()
-    # print ''
-    # print "qa dtypes: \n", qa_df.dtypes
-    # print ''
-    # print "first 5 rows (qa): \n", qa_df.show(5)
-    # print ''
+    print reviews_df.dtypes
 
-    # print "Group by product: "
-    # print qa_df.groupby("asin").count().show()
-
-    # print "first 5 rows (reviews): \n", reviews_df.show(20)
-
-    # print reviews_df.dtypes
-
-    # print "group by users: \n", 
-    # grouped = reviews_df.groupby("reviewerID")
-    # print "grouped: \n", grouped.show(20)
-
-    # print "agg \n"
+    print "agg \n"
 
     # print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
 
-    # print reviews_df.select("reviewerID", "helpful") # returns a dataframe
-    # print reviews_df.select("reviewerID", "helpful").rdd.map(lambda x: x.split(' '))
-
+    new_df = reviews_df.withColumn("helpful", reviews_df.helpful[0] - reviews_df.helpful[1])
+    print new_df.groupby("reviewerID").show(10)
 
 
 
