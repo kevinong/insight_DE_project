@@ -85,10 +85,10 @@ if __name__ == "__main__":
 
     print "agg \n"
 
-    print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
+    # print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
 
-    print reviews_df.select("reviewerID", "helpful")
-    print reviews_df.select("reviewerID", "helpful").show(20)
+    print reviews_df.select("reviewerID", "helpful") # returns a dataframe
+    print reviews_df.select("reviewerID", "helpful").rdd()
 
 
 
