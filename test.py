@@ -2,7 +2,7 @@ import findspark
 findspark.init()
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions as F
-from pyspark.sql.types import FloatType
+from pyspark.sql.types import StringType
 from textblob import TextBlob
 
 # from boto.s3.connection import S3Connection
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     print "agg \n"
 
-    sentiment_udf = F.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType)
+    sentiment_udf = F.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, StringType)
 
     # print reviews_df.groupby("reviewerID").agg(F.avg("overall"), F.min("overall"), F.max("overall"), F.count("overall")).show(50)
 
@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     # reviews_df = reviews_df.withColumn("reviewText", TextBlob(reviews_df.reviewText).sentiment.polarity)
     # reviews_df['sentiment'] = reviews_df['reviewText'].apply(lambda review: TextBlob(review).sentiment.polarity)
-    reviews_df['sentiment'] = reviews_df['reviewText'].apply(sentiment_calc)
+    # reviews_df['sentiment'] = reviews_df['reviewText'].apply(sentiment_calc)
     reviews_df.withColumn("reviewText", sentiment_udf(reviews_df.reviewText))
     print reviews_df.show(10)
     print reviews_df.groupby("reviewerID").agg(F.avg("sentiment"), F.min("sentiment"), F.max("sentiment"), F.count("sentiment")).show(50)
