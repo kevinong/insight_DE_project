@@ -29,6 +29,7 @@ class ReviewsData:
 
     def main(self):
         sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
+        subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
         self.reviews_df = self.reviews_df.withColumn("sentiment", sentiment_udf(reviews_df.reviewText))
 
         self.reviews_df.show(10)
@@ -51,7 +52,7 @@ if __name__ == "__main__":
     conf = SparkConf().setAppName("test")
     sc = SparkContext(conf = conf)
 
-    reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Books_5.json')
+    reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
     reviewsData.main()
