@@ -56,9 +56,9 @@ class ReviewsData:
 
         print "start transfrom 2: ", datetime.datetime.now()
 
-        self.reviews_df = self.reviews_df\
-                            .withColumn("pos_polarity", pos_polarity_udf(self.reviews_df.polarity))\
-                            .withColumn("neg_polarity", neg_polarity_udf(self.reviews_df.polarity))
+        # self.reviews_df = self.reviews_df\
+                            # .withColumn("pos_polarity", pos_polarity_udf(self.reviews_df.polarity))\
+                            # .withColumn("neg_polarity", neg_polarity_udf(self.reviews_df.polarity))
                             # .withColumn("polarity", self.reviews_df.sentiment[0])\
                             # .withColumn("subjectivity", self.reviews_df.sentiment[1])\
                             # .withColumn("helpful", self.reviews_df.helpful[0] - self.reviews_df.helpful[1])
@@ -79,8 +79,8 @@ class ReviewsData:
         #                                                        functions.sum("neg_polarity"))
 
         print 'transformation done: ', datetime.datetime.now()
-        # print self.reviews_df.show(5)
-        self.reviews_df.select("reviewerID", "helpful", "helpful_vote", "unhelpful_vote", "polarity", "pos_polarity", "neg_polarity").rdd.saveAsTextFile("df.txt")
+        print self.reviews_df.show(5)
+        # self.reviews_df.select("reviewerID", "helpful", "helpful_vote", "unhelpful_vote", "polarity", "pos_polarity", "neg_polarity").rdd.saveAsTextFile("df.txt")
 
 
 
