@@ -86,6 +86,8 @@ class ReviewsData:
 
         grouped_df.show(20)
 
+def fudf(val):
+        return reduce (lambda x, y:x+y, val)
 
 class ProductData:
     def __init__(self, path, conf, sc):
@@ -95,11 +97,15 @@ class ProductData:
             load(path)
 
     def main(self):
-        # self.df.show(10)
+        self.df.show(10)
 
         # flatten = lambda l: [item for sublist in l for item in sublist]
-        flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType()))
-        self.df = self.df.withColumn("categories2", flatlist_udf(self.df.categories))
+        # flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType()))
+        # self.df = self.df.withColumn("categories", flatlist_udf(self.df.categories))
+        
+        flatten_udf = F.udf(fudf, ArrayType(StringType()))
+
+        self.df = self.df.withColumn("cat2", flatten_udf(self.df.categories))
 
         self.df.show(10)
 
@@ -122,7 +128,7 @@ if __name__ == "__main__":
     sc = SparkContext(conf = conf)
 
     reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
-    products_path = get_s3_path(BUCKET, 'product', 'metadata.json')
+    products_path = get_s3_path(BUCKET, 'product', 'meta_Toys_and_Games.json')
 
     productsData = ProductData(products_path, conf, sc)
     productsData.main()
