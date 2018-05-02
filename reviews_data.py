@@ -80,7 +80,7 @@ class ReviewsData:
 
         print 'transformation done: ', datetime.datetime.now()
         # print self.reviews_df.show(5)
-        reviews_df.select("reviewerID", "helpful", "helpful_vote", "unhelpful_vote", "polarity", "pos_polarity", "neg_polarity").rdd.saveAsTextFile("df.txt")
+        self.reviews_df.select("reviewerID", "helpful", "helpful_vote", "unhelpful_vote", "polarity", "pos_polarity", "neg_polarity").rdd.saveAsTextFile("df.txt")
 
 
 
