@@ -36,6 +36,8 @@ class ReviewsData:
         # sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment, FloatType())
         # sentiment_udf = functions.udf(lambda reviewText: sentiment(reviewText), ArrayType(FloatType()))
 
+        self.reviews_df.show(2)
+
         print "start time: ", datetime.datetime.now()
 
         polarity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
@@ -54,6 +56,7 @@ class ReviewsData:
                             .withColumn("helpful_vote", self.reviews_df.helpful[0])\
                             .withColumn("unhelpful_vote", self.reviews_df.helpful[1])
 
+        reviews_pol_df.show(2)
         print "start transfrom 2: ", datetime.datetime.now()
 
         new_reviews_df = reviews_pol_df\
@@ -80,7 +83,7 @@ class ReviewsData:
         #                                                        functions.sum("neg_polarity"))
 
         print 'transformation done: ', datetime.datetime.now()
-        print new_reviews_df.show(5)
+        new_reviews_df.show(2)
         # self.reviews_df.select("reviewerID", "helpful", "helpful_vote", "unhelpful_vote", "polarity", "pos_polarity", "neg_polarity").rdd.saveAsTextFile("df.txt")
 
 
