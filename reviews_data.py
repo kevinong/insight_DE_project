@@ -33,8 +33,6 @@ class ReviewsData:
             load(path)
 
     def main(self):
-        # sentiment_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment, FloatType())
-        # sentiment_udf = functions.udf(lambda reviewText: sentiment(reviewText), ArrayType(FloatType()))
 
         self.reviews_df.show(5)
 
@@ -50,16 +48,16 @@ class ReviewsData:
 
         print "start transform 1: ", datetime.datetime.now()
         # Transforming review data
-        reviews_pol_df = self.reviews_df\
+        self.reviews_df = self.reviews_df\
                             .withColumn("polarity", polarity_udf(self.reviews_df.reviewText))\
                             .withColumn("subjectivity", subjectivity_udf(self.reviews_df.reviewText))\
                             .withColumn("helpful_vote", self.reviews_df.helpful[0])\
                             .withColumn("unhelpful_vote", self.reviews_df.helpful[1])
 
-        reviews_pol_df.show(5)
+        self.reviews_df.show(5)
         print "start transfrom 2: ", datetime.datetime.now()
 
-        new_reviews_df = reviews_pol_df\
+        self.reviews_df = self.reviews_df\
                             .withColumn("pos_polarity", pos_polarity_udf(reviews_pol_df.polarity))\
                             .withColumn("neg_polarity", neg_polarity_udf(reviews_pol_df.polarity))
 
@@ -75,16 +73,19 @@ class ReviewsData:
         # self.reviews_df = self.reviews_df.withColumn("polarity", self.reviews_df.sentiment[0])\
                             # .withColumn("subjectivity", self.reviews_df.sentiment[1])
 
-        # grouped_df = self.reviews_df.groupby("reviewerID").agg(functions.avg("overall"), \
-        #                                                        functions.sum("helpful_vote"), \
-        #                                                        functions.sum("unhelpful_vote"), \
-        #                                                        functions.avg("polarity"), \
-        #                                                        functions.sum("pos_polarity"), \
-        #                                                        functions.sum("neg_polarity"))
-
         print 'transformation done: ', datetime.datetime.now()
-        new_reviews_df.show(5)
-        # self.reviews_df.select("reviewerID", "helpful", "helpful_vote", "unhelpful_vote", "polarity", "pos_polarity", "neg_polarity").rdd.saveAsTextFile("df.txt")
+        self.reviews_df.show(5)
+
+        grouped_df = self.reviews_df.groupby("reviewerID").agg(functions.avg("overall"), \
+                                                               functions.sum("helpful_vote"), \
+                                                               functions.sum("unhelpful_vote"), \
+                                                               functions.avg("polarity"), \
+                                                               functions.sum("pos_polarity"), \
+                                                               functions.sum("neg_polarity"))
+
+        grouped_df.show(20)
+
+
 
 
 
