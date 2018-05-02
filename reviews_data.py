@@ -98,7 +98,7 @@ class ProductData:
         self.df.show(10)
 
         # flatten = lambda l: [item for sublist in l for item in sublist]
-        flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType))
+        flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType()))
         self.df = self.df.withColumn("categories", flatlist_udf(self.df.categories))
 
         self.df.show(10)
