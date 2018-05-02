@@ -79,7 +79,8 @@ class ReviewsData:
         #                                                        functions.sum("neg_polarity"))
 
         print 'transformation done: ', datetime.datetime.now()
-        print self.reviews_df.show(5)
+        # print self.reviews_df.show(5)
+        reviews_df.select("reviewerID", "helpful", "helpful_vote", "unhelpful_vote", "polarity", "pos_polarity", "neg_polarity").rdd.saveAsTextFile("df.txt")
 
 
 
