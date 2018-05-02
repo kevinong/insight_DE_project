@@ -87,7 +87,7 @@ class ReviewsData:
         grouped_df.show(20)
 
 def fudf(val):
-        return reduce (lambda x, y:x+y, val)
+        return lambda x, y:x+y, val
 
 class ProductData:
     def __init__(self, path, conf, sc):
