@@ -2,7 +2,7 @@ import findspark
 findspark.init()
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions
-from pyspark.sql.types import FloatType, ArrayType
+from pyspark.sql.types import FloatType, ArrayType, StringType
 from textblob import TextBlob
 import datetime
 
@@ -90,12 +90,18 @@ class ReviewsData:
 class ProductData:
     def __init__(self, path, conf, sc):
         sqlContext = SQLContext(sc)
-        self.product_df = sqlContext.read.format('json').\
+        self.df = sqlContext.read.format('json').\
             options(header='true', inferSchema='true').\
             load(path)
 
     def main(self):
-        self.product_df.show(10)
+        self.df.show(10)
+
+        # flatten = lambda l: [item for sublist in l for item in sublist]
+        flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType))
+        self.df = self.df.withColumn("categories", flatlist_udf(self.df.categories))
+
+        self.df.show(10)
 
 
 
