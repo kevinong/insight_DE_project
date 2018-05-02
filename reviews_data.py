@@ -81,7 +81,8 @@ class ReviewsData:
                                                                functions.sum("unhelpful_vote"), \
                                                                functions.avg("polarity"), \
                                                                functions.sum("pos_polarity"), \
-                                                               functions.sum("neg_polarity"))
+                                                               functions.sum("neg_polarity"), \
+                                                               functions.avg("subjectivity"))
 
         grouped_df.show(20)
 
