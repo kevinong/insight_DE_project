@@ -87,6 +87,15 @@ class ReviewsData:
         grouped_df.show(20)
 
 
+class ProductData:
+    def __init__(self, path, conf, sc):
+        sqlContext = SQLContext(sc)
+        self.product_df = sqlContext.read.format('json').\
+            options(header='true', inferSchema='true').\
+            load(path)
+
+    def main(self):
+        self.product_df.show(10)
 
 
 
@@ -107,9 +116,14 @@ if __name__ == "__main__":
     sc = SparkContext(conf = conf)
 
     reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
+    products_path = get_s3_path(BUCKET, 'products', 'metadata.json')
 
-    reviewsData = ReviewsData(reviews_path, conf, sc)
-    reviewsData.main()
+    productsData = ProductData(products_path, conf, sc)
+    productsData.main()
+
+
+    # reviewsData = ReviewsData(reviews_path, conf, sc)
+    # reviewsData.main()
 
 
     # product_path = get_s3_path(BUCKET, "product", "metadata.json")
