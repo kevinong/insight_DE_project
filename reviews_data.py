@@ -110,6 +110,8 @@ def custom(x, u):
 
 def flat(cat):
     res = []
+    if cat is None:
+        return res
     for sublist in cat:
         if sublist is not None:
             for c in sublist:
