@@ -87,6 +87,13 @@ class ReviewsData:
 
         grouped_df.show(20)
 
+def fudf(val):
+    #emlist = []
+    #for item in val:
+    #    emlist += item
+    #return emlist
+    return reduce (lambda x, y:x+y, val)
+
 class ProductData:
     def __init__(self, path, conf, sc):
         sqlContext = SQLContext(sc)
@@ -97,6 +104,9 @@ class ProductData:
     def main(self):
         print self.df.select("categories").dtypes
         self.df.select("categories", "related").show(10, truncate = False)
+
+        flattenUdf = functions.udf(fudf, ArrayType(StringType()))
+        self.df.select(flattenUdf("categories").alias("categories")).show(truncate=False)
 
         # flatten = lambda l: [item for sublist in l for item in sublist]
         # flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType()))
