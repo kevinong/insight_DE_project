@@ -129,11 +129,13 @@ class ProductData:
 
     def main(self):
         print self.df.select("categories").dtypes
-        self.df.select("categories").show(10)
+        self.df.select("categories").show(10, False)
 
         flat_udf = functions.udf(flat, ArrayType(StringType()))
-        new_df = self.df.withColumn("categories2", flat_udf(self.df.categories))
-        new_df.select("categories2").show(10)
+        new_df = self.df.withColumn("categories", flat_udf(self.df.categories))
+        new_df.select("categories").show(10, False)
+        new_df = new_df.withColumn("related", flat_udf(self.df.related))
+        new_df.select("related").show(10, False)
 
         # self.df.select("categories").rdd.map(lambda row:(row[0], reduce(lambda x,y:x+y, row[1]))).toDF().show(10)
 
