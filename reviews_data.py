@@ -88,13 +88,25 @@ class ReviewsData:
         grouped_df.show(20)
 
 def fudf(val):
-    emlist = []
-    if val in None:
-        return emlist
-    for item in val:
-       emlist += item
-    return emlist
-    # return reduce (lambda x, y:x+y, val)
+    # emlist = []
+    # if val in None:
+    #     return emlist
+    # for item in val:
+    #    emlist += item
+    # return emlist
+    return reduce (custom, val)
+
+def custom(x, u):
+    if x is None and u is None:
+        return []
+
+    if x is None:
+        return u
+
+    if u is None:
+        return x
+
+    return x + u
 
 class ProductData:
     def __init__(self, path, conf, sc):
@@ -105,16 +117,16 @@ class ProductData:
 
     def main(self):
         print self.df.select("categories").dtypes
-        self.df.select("categories", "related").show(10)
+        self.df.select("categories").show(10)
 
-        self.df.select("categories").rdd.map(lambda row:(row[0], reduce(lambda x,y:x+y, row[1]))).toDF().show(10)
+        # self.df.select("categories").rdd.map(lambda row:(row[0], reduce(lambda x,y:x+y, row[1]))).toDF().show(10)
 
-        # flattenUdf = functions.udf(fudf, ArrayType(StringType()))
+        flattenUdf = functions.udf(fudf, ArrayType(StringType()))
         # self.df.select(flattenUdf("categories").alias("categories")).show(10)
 
         # flatten = lambda l: [item for sublist in l for item in sublist]
         # flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType()))
-        # self.df = self.df.withColumn("categories", flatlist_udf(self.df.categories))
+        self.df = self.df.withColumn("categories", flatlist_udf(self.df.categories))
         
 
 
@@ -122,7 +134,8 @@ class ProductData:
 
         # self.df.show(10)
 
-
+        self.df.select("categories").show(10)
+        
 
 
 if __name__ == "__main__":
