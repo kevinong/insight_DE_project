@@ -89,6 +89,8 @@ class ReviewsData:
 
 def fudf(val):
     emlist = []
+    if val in None:
+        return emlist
     for item in val:
        emlist += item
     return emlist
