@@ -8,5 +8,9 @@ session = cluster.connect(CASSANDRA_NAMESPACE)
 
 rows = session.execute('SELECT reviewerID, avg_star FROM data')
 
+counter = 0
 for user_row in rows:
+    if counter > 5:
+        break
+    counter += 1
     print user_row.reviewerID, user_row.avg_star
