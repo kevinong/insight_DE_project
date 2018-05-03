@@ -3,6 +3,7 @@ findspark.init()
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions
 from pyspark.sql.types import FloatType, ArrayType, StringType
+
 from textblob import TextBlob
 import datetime
 
@@ -95,13 +96,13 @@ class ProductData:
 
     def main(self):
         print self.df.select("categories").dtypes
-        self.df.select("categories").show(10, truncate = False)
+        self.df.select("categories", "related").show(10, truncate = False)
 
         # flatten = lambda l: [item for sublist in l for item in sublist]
         # flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType()))
         # self.df = self.df.withColumn("categories", flatlist_udf(self.df.categories))
         
-        # flatten_udf = functions.udf(lambda cat: [c for c in cat], ArrayType(StringType()))
+
 
         # self.df = self.df.withColumn("cat2", flatten_udf(self.df.categories))
 
