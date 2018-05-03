@@ -129,7 +129,7 @@ class ProductData:
         self.df.select("categories").show(10)
 
         flat_udf = functions.udf(flat, ArrayType(StringType()))
-        new_df = self.df.withColumn("categories2", lambda cat: flat_udf(self.df.categories))
+        new_df = self.df.withColumn("categories2", flat_udf(self.df.categories))
         new_df.select("categories2").show(10)
 
         # self.df.select("categories").rdd.map(lambda row:(row[0], reduce(lambda x,y:x+y, row[1]))).toDF().show(10)
