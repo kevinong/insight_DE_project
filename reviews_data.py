@@ -112,11 +112,9 @@ def flat(cat):
     res = []
     if cat is None:
         return res
-    for sublist in cat:
-        if sublist is not None:
-            res += sublist
-            # for c in sublist:
-            #     res += c
+    for c in cat:
+        if c is not None and c not in res:
+            res += c
 
     return res
 
