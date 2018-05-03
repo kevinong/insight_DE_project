@@ -114,8 +114,9 @@ def flat(cat):
         return res
     for sublist in cat:
         if sublist is not None:
-            for c in sublist:
-                res += c
+            res += sublist
+            # for c in sublist:
+            #     res += c
 
     return res
 
