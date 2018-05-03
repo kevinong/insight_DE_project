@@ -108,6 +108,15 @@ def custom(x, u):
 
     return x + u
 
+def flat(cat):
+    res = []
+    for sublist in cat:
+        if sublist is not None:
+            for c in sublist:
+                res += c
+
+    return res
+
 class ProductData:
     def __init__(self, path, conf, sc):
         sqlContext = SQLContext(sc)
@@ -118,6 +127,10 @@ class ProductData:
     def main(self):
         print self.df.select("categories").dtypes
         self.df.select("categories").show(10)
+
+        flat_udf = functions.udf(flat, ArrayType(StringType()))
+        new_df = self.df.withColumn("categories2", lambda cat: flat_udf(self.df.categories))
+        new_df.select("categories2").show(10)
 
         # self.df.select("categories").rdd.map(lambda row:(row[0], reduce(lambda x,y:x+y, row[1]))).toDF().show(10)
 
@@ -135,9 +148,9 @@ class ProductData:
         # self.df.show(10)
 
         # new_df = self.df.select("categories").rdd.map(lambda val: reduce(custom, val)).toDF()
-        new_df = self.df.select("categories").rdd.map(lambda val: val[0]).toDF()
-        print new_df.dtypes
-        new_df.select('_1').show(10)
+        # new_df = self.df.select("categories").rdd.map(lambda val: val[0]).toDF()
+        # print new_df.dtypes
+        # new_df.select('_1').show(10)
 
 
 if __name__ == "__main__":
