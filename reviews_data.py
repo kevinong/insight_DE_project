@@ -107,8 +107,10 @@ class ProductData:
         print self.df.select("categories").dtypes
         self.df.select("categories", "related").show(10)
 
-        flattenUdf = functions.udf(fudf, ArrayType(StringType()))
-        self.df.select(flattenUdf("categories").alias("categories")).show(10)
+        self.df.select("categories").rdd.map(lambda row:(row[0], reduce(lambda x,y:x+y, row[1]))).toDF().show(10)
+
+        # flattenUdf = functions.udf(fudf, ArrayType(StringType()))
+        # self.df.select(flattenUdf("categories").alias("categories")).show(10)
 
         # flatten = lambda l: [item for sublist in l for item in sublist]
         # flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType()))
