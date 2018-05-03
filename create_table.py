@@ -12,5 +12,5 @@ session.execute('CREATE KEYSPACE ' + CASSANDRA_NAMESPACE  + ' WITH replication =
 session.execute('USE ' + CASSANDRA_NAMESPACE)
 
 session.execute('DROP TABLE IF EXISTS data;')
-session.execute('CREATE TABLE data (reviewerID text, avg_star float, helpful float, pos float, neg float, PRIMARY KEY (reviewerID));')
+session.execute('CREATE TABLE data (reviewerID text, avg_star float, helpful int, unhelpful int, avg_pol float, pos float, neg float, subjectivity float, PRIMARY KEY (reviewerID));')
 
