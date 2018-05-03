@@ -8,7 +8,7 @@ session = cluster.connect()
 
 session.execute('DROP KEYSPACE IF EXISTS '+CASSANDRA_NAMESPACE + ';')
 
-session.execute('CREATE KEYSPACE ' + CASSANDRA_NAMESPACE  + ';')
+session.execute('CREATE KEYSPACE ' + CASSANDRA_NAMESPACE  + ' WITH replication = {\'class\': \'SimpleStrategy\', \'replication_factor\' : 3};')
 session.execute('USE ' + CASSANDRA_NAMESPACE)
 
 session.execute('DROP TABLE IF EXISTS data;')
