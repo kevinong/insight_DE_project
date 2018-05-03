@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
     reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
     # products_path = get_s3_path(BUCKET, 'product', 'meta_Toys_and_Games.json')
-    product_path = get_s3_path(BUCKET, "product", "metadata.json")
+    products_path = get_s3_path(BUCKET, "product", "metadata.json")
 
     productsData = ProductData(products_path, conf, sc)
     productsData.main()
