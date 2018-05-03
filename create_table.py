@@ -1,5 +1,4 @@
 from cassandra.cluster import Cluster
-import config
 
 CASSANDRA_SERVER    = ['54.245.66.232', '54.218.181.48', '54.71.237.54', '52.13.222.70']
 CASSANDRA_NAMESPACE = "AmazonReviews"
