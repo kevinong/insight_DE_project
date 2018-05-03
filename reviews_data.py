@@ -136,9 +136,8 @@ class ProductData:
 
         # new_df = self.df.select("categories").rdd.map(lambda val: reduce(custom, val)).toDF()
         new_df = self.df.select("categories").rdd.map(lambda val: val[0]).toDF()
-
-	    print new_df.dtypes
-	    new_df.select('_1').show(10)
+        print new_df.dtypes
+        new_df.select('_1').show(10)
 
 
 if __name__ == "__main__":
