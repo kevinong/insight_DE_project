@@ -121,12 +121,12 @@ class ProductData:
 
         # self.df.select("categories").rdd.map(lambda row:(row[0], reduce(lambda x,y:x+y, row[1]))).toDF().show(10)
 
-        flattenUdf = functions.udf(fudf, ArrayType(StringType()))
+        # flattenUdf = functions.udf(fudf, ArrayType(StringType()))
         # self.df.select(flattenUdf("categories").alias("categories")).show(10)
 
         # flatten = lambda l: [item for sublist in l for item in sublist]
         # flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType()))
-        self.df = self.df.withColumn("categories", flattenUdf(self.df.categories))
+        # self.df = self.df.withColumn("categories", flattenUdf(self.df.categories))
         
 
 
@@ -134,7 +134,7 @@ class ProductData:
 
         # self.df.show(10)
 
-        self.df.select("categories").show(10)
+        self.df.select("categories").rdd.map(lambda list: reduce(custom, list)).toDF().show(10)
 
 
 
