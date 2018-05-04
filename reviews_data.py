@@ -77,13 +77,13 @@ class ReviewsData:
         print 'transformation done: ', datetime.datetime.now()
         self.reviews_df.show(5)
 
-        grouped_df = self.reviews_df.groupby("reviewerID").agg(functions.avg("overall"), \
-                                                               functions.sum("helpful_vote"), \
-                                                               functions.sum("unhelpful_vote"), \
-                                                               functions.avg("polarity"), \
-                                                               functions.sum("pos_polarity"), \
-                                                               functions.sum("neg_polarity"), \
-                                                               functions.avg("subjectivity"))
+        grouped_df = self.reviews_df.groupby("reviewerID").agg(functions.avg("overall").alias("avg_star"), \
+                                                               functions.sum("helpful_vote").alias("helpful"), \
+                                                               functions.sum("unhelpful_vote").alias("unhelpful"), \
+                                                               functions.avg("polarity").alias("avg_pol"), \
+                                                               functions.sum("pos_polarity").alias("pos"), \
+                                                               functions.sum("neg_polarity").alias("neg"), \
+                                                               functions.avg("subjectivity").alias("subjectivity"))
 
         grouped_df.show(20)
 
