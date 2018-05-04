@@ -64,3 +64,13 @@ class ProductData:
         # new_df = self.df.select("categories").rdd.map(lambda val: val[0]).toDF()
         # print new_df.dtypes
         # new_df.select('_1').show(10)
+
+if __name__ == "__main__":
+    conf = SparkConf().setAppName("test")
+    sc = SparkContext(conf = conf)
+    
+    products_path = get_s3_path(BUCKET, 'product', 'meta_Toys_and_Games.json')
+    # products_path = get_s3_path(BUCKET, "product", "metadata.json")
+
+    productsData = ProductData(products_path, conf, sc)
+    productsData.main()
