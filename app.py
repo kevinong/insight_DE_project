@@ -38,7 +38,7 @@ net_helpfulness = []
 user_id = []
 for i in range(1000):
     pos.append(rows[i].pos)
-    net_helpfulness.append(rows[i].helpful - rows[i].unhelpful)
+    net_helpfulness.append(rows[i].helpful)
     user_id.append(rows[i].reviewerid)
 
 
