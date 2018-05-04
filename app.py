@@ -24,14 +24,14 @@ rows = session.execute('SELECT * FROM data')
 stars = []
 helpfulness = []
 unhelpfulness = []
-for i in range(5):
+for i in range(10):
     stars.append(rows[i].avg_star)
 
-for i in range(5):
+for i in range(10):
     helpfulness.append(rows[i].helpful)
 
-for i in range(5):
-    unhelpfulness.append(rows[i].unhelpful)
+# for i in range(10):
+    # unhelpfulness.append(rows[i].unhelpful)
 
 pos = []
 net_helpfulness = []
@@ -85,7 +85,7 @@ app.layout = html.Div(children=[
         id='star-graph',
         figure={
             'data': [
-                {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
+                {'x': list(range(10)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
                 # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
             ],
             'layout': {
@@ -98,7 +98,7 @@ app.layout = html.Div(children=[
         id='helpfulness-graph',
         figure={
             'data': [
-                {'x': list(range(5)), 'y': helpfulness, 'type': 'bar', 'name': 'Helpfulness'},
+                {'x': list(range(10)), 'y': helpfulness, 'type': 'bar', 'name': 'Helpfulness'},
                 # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
             ],
             'layout': {
@@ -107,18 +107,18 @@ app.layout = html.Div(children=[
         }
     ),
 
-    dcc.Graph(
-        id='unhelpfulness-graph',
-        figure={
-            'data': [
-                {'x': list(range(5)), 'y': unhelpfulness, 'type': 'bar', 'name': 'Unhelpfulness'},
-                # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-            ],
-            'layout': {
-                'title': 'Users Unhelpful Votes'
-            }
-        }
-    )
+    # dcc.Graph(
+    #     id='unhelpfulness-graph',
+    #     figure={
+    #         'data': [
+    #             {'x': list(range(5)), 'y': unhelpfulness, 'type': 'bar', 'name': 'Unhelpfulness'},
+    #             # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
+    #         ],
+    #         'layout': {
+    #             'title': 'Users Unhelpful Votes'
+    #         }
+    #     }
+    # )
 ])
 
 if __name__ == '__main__':
