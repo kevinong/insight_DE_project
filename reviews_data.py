@@ -60,7 +60,8 @@ class ReviewsData:
 
         self.reviews_df = self.reviews_df\
                             .withColumn("pos_polarity", pos_polarity_udf(self.reviews_df.polarity))\
-                            .withColumn("neg_polarity", neg_polarity_udf(self.reviews_df.polarity))
+                            .withColumn("neg_polarity", neg_polarity_udf(self.reviews_df.polarity))\
+                            .withColumnRenamed("reviewerID", "reviewerid")
 
                             # .withColumn("polarity", self.reviews_df.sentiment[0])\
                             # .withColumn("subjectivity", self.reviews_df.sentiment[1])\
@@ -77,7 +78,7 @@ class ReviewsData:
         print 'transformation done: ', datetime.datetime.now()
         self.reviews_df.show(5)
 
-        grouped_df = self.reviews_df.groupby("reviewerID").agg(functions.avg("overall").alias("avg_star"), \
+        grouped_df = self.reviews_df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
                                                                functions.sum("helpful_vote").alias("helpful"), \
                                                                functions.sum("unhelpful_vote").alias("unhelpful"), \
                                                                functions.avg("polarity").alias("avg_pol"), \
@@ -87,7 +88,7 @@ class ReviewsData:
 
         grouped_df.show(20)
 
-        grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews.data").save()
+        grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
         # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
