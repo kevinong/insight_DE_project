@@ -26,24 +26,11 @@ app.layout = html.Div(children=[
         Amazon User Review Data
     '''),
 
-    # dcc.Graph(
-    #     id='example-graph',
-    #     figure={
-    #         'data': [
-    #             {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
-    #             {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-    #         ],
-    #         'layout': {
-    #             'title': 'Dash Data Visualization'
-    #         }
-    #     }
-    # )
-
     dcc.Graph(
         id='example-graph',
         figure={
             'data': [
-                {'x': [1, 2, 3], 'y': [rows[0].avg_star, rows[1].avg_star, rows[2].avg_star], 'type': 'bar', 'name': 'Stars'},
+                {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
                 # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
             ],
             'layout': {
@@ -51,6 +38,19 @@ app.layout = html.Div(children=[
             }
         }
     )
+
+    # dcc.Graph(
+    #     id='example-graph',
+    #     figure={
+    #         'data': [
+    #             {'x': [1, 2, 3], 'y': [rows[0].avg_star, rows[1].avg_star, rows[2].avg_star], 'type': 'bar', 'name': 'Stars'},
+    #             # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
+    #         ],
+    #         'layout': {
+    #             'title': 'Dash Data Visualization'
+    #         }
+    #     }
+    # )
 ])
 
 if __name__ == '__main__':
