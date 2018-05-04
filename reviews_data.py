@@ -87,7 +87,7 @@ class ReviewsData:
 
         grouped_df.show(20)
 
-        grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "AmazonReviews").save(mode = "append")
+        grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews.data").save()
 
         # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
