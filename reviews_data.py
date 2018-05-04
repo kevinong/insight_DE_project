@@ -88,32 +88,11 @@ class ReviewsData:
 
         grouped_df.show(20)
 
-        grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
+        # grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
         # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
 
-
-def fudf(val):
-    # emlist = []
-    # if val in None:
-    #     return emlist
-    # for item in val:
-    #    emlist += item
-    # return emlist
-    return reduce (custom, val)
-
-def custom(x, u):
-    if x is None and u is None:
-        return []
-
-    if x is None:
-        return u
-
-    if u is None:
-        return x
-
-    return x + u
 
 def flat(cat):
     res = []

@@ -8,7 +8,7 @@ session = cluster.connect()
 
 session.execute("USE " + CASSANDRA_NAMESPACE)
 
-rows = session.execute('SELECT reviewerID, avg_star FROM data')
+rows = session.execute('SELECT reviewerid, avg_star FROM data')
 
 counter = 0
 for user_row in rows:
