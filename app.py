@@ -4,6 +4,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 from flask import Flask
+import plotly.graph_objs as go
 
 server = Flask(__name__)
 app = dash.Dash(__name__, server = server)
@@ -32,11 +33,13 @@ for i in range(5):
 for i in range(5):
     unhelpfulness.append(rows[i].unhelpful)
 
-# pos = []
-# net_helpfulness = []
-# for i in range(100):
-#     pos.append(rows[i].pos)
-#     net_helpfulness.append(rows[i].helpful - rows[i].unhelpful)
+pos = []
+net_helpfulness = []
+user_id = []
+for i in range(100):
+    pos.append(rows[i].pos)
+    net_helpfulness.append(rows[i].helpful - rows[i].unhelpful)
+    user_id.append(rows[i].reviewerid)
 
 
 app.layout = html.Div(children=[
@@ -59,11 +62,15 @@ app.layout = html.Div(children=[
     #     }
     # )
 
-    dcc.Scatter(
+    dcc.Graph(
         id='scatter-graph',
         figure={
             'data': [
-                {'x': pos, 'y': net_helpfulness},
+                go.Scatter(
+                    x = pos,
+                    y = net_helpfulness,
+                    text = user_id
+                )
                 # {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
                 # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
             ],
