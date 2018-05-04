@@ -59,19 +59,19 @@ app.layout = html.Div(children=[
     #     }
     # )
 
-    # dcc.Scatter(
-    #     id='scatter-graph',
-    #     figure={
-    #         'data': [
-    #             {'x': pos, 'y': net_helpfulness},
-    #             # {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
-    #             # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-    #         ],
-    #         'layout': {
-    #             'title': 'Users Positivity vs Helpfulness'
-    #         }
-    #     }
-    # ),
+    dcc.Scatter(
+        id='scatter-graph',
+        figure={
+            'data': [
+                {'x': pos, 'y': net_helpfulness},
+                # {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
+                # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
+            ],
+            'layout': {
+                'title': 'Users Positivity vs Helpfulness'
+            }
+        }
+    ),
 
     dcc.Graph(
         id='star-graph',
