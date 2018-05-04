@@ -18,11 +18,21 @@ session = cluster.connect()
 
 session.execute("USE " + CASSANDRA_NAMESPACE)
 
-rows = session.execute('SELECT reviewerid, avg_star FROM data')
+rows = session.execute('SELECT * FROM data')
 
 stars = []
+helpfulness = []
+unhelpfulness = []
 for i in range(5):
     stars.append(rows[i].avg_star)
+
+for i in range(5):
+    helpfulness.append(rows[i].helpful)
+
+for i in range(5):
+    unhelpfulness.append(rows[i].unhelpful)
+
+
 
 
 app.layout = html.Div(children=[
@@ -46,7 +56,7 @@ app.layout = html.Div(children=[
     # )
 
     dcc.Graph(
-        id='example-graph',
+        id='star-graph',
         figure={
             'data': [
                 {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
@@ -54,6 +64,32 @@ app.layout = html.Div(children=[
             ],
             'layout': {
                 'title': 'Users Average Star Ratings'
+            }
+        }
+    ),
+
+    dcc.Graph(
+        id='helpfulness-graph',
+        figure={
+            'data': [
+                {'x': list(range(5)), 'y': helpfulness, 'type': 'bar', 'name': 'Helpfulness'},
+                # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
+            ],
+            'layout': {
+                'title': 'Users Helpful Votes'
+            }
+        }
+    ),
+
+    dcc.Graph(
+        id='helpfulness-graph',
+        figure={
+            'data': [
+                {'x': list(range(5)), 'y': unhelpfulness, 'type': 'bar', 'name': 'Unhelpfulness'},
+                # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
+            ],
+            'layout': {
+                'title': 'Users Unhelpful Votes'
             }
         }
     )
