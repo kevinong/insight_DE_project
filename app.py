@@ -69,7 +69,8 @@ app.layout = html.Div(children=[
                 go.Scatter(
                     x = pos,
                     y = net_helpfulness,
-                    text = user_id
+                    text = user_id,
+                    mode = 'markers'
                 )
                 # {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
                 # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
