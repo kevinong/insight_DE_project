@@ -75,9 +75,9 @@ app.layout = html.Div(children=[
                 # {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
                 # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
             ],
-            'layout': {
-                'title': 'Users Positivity vs Helpfulness'
-            }
+            'layout': go.Layout(
+                xaxis = {'title': 'Positivity'},
+                yaxis = {'title': 'Helpful Votes'})
         }
     ),
 
