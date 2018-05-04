@@ -82,7 +82,7 @@ app.layout = html.Div(children=[
     ),
 
     dcc.Graph(
-        id='helpfulness-graph',
+        id='unhelpfulness-graph',
         figure={
             'data': [
                 {'x': list(range(5)), 'y': unhelpfulness, 'type': 'bar', 'name': 'Unhelpfulness'},
