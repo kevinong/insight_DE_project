@@ -20,6 +20,10 @@ session.execute("USE " + CASSANDRA_NAMESPACE)
 
 rows = session.execute('SELECT reviewerid, avg_star FROM data')
 
+stars = []
+for i in range(5):
+    stars += rows[i].avg_star
+
 
 app.layout = html.Div(children=[
     html.H1(children='Find the right users for a product'),
@@ -45,11 +49,11 @@ app.layout = html.Div(children=[
         id='example-graph',
         figure={
             'data': [
-                {'x': [1, 2, 3], 'y': [rows[0].avg_star, rows[1].avg_star, rows[2].avg_star], 'type': 'bar', 'name': 'Stars'},
+                {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
                 # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
             ],
             'layout': {
-                'title': 'Dash Data Visualization'
+                'title': 'Users Average Star Ratings'
             }
         }
     )
