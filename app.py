@@ -32,11 +32,11 @@ for i in range(5):
 for i in range(5):
     unhelpfulness.append(rows[i].unhelpful)
 
-pos = []
-net_helpfulness = []
-for i in range(100):
-    pos.append(rows[i].pos)
-    net_helpfulness.append(rows[i].helpful - rows[i].unhelpful)
+# pos = []
+# net_helpfulness = []
+# for i in range(100):
+#     pos.append(rows[i].pos)
+#     net_helpfulness.append(rows[i].helpful - rows[i].unhelpful)
 
 
 app.layout = html.Div(children=[
@@ -59,19 +59,19 @@ app.layout = html.Div(children=[
     #     }
     # )
 
-    dcc.Scatter(
-        id='star-graph',
-        figure={
-            'data': [
-                {'x': pos, 'y': net_helpfulness}
-                # {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
-                # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-            ],
-            'layout': {
-                'title': 'Users Average Star Ratings'
-            }
-        }
-    ),
+    # dcc.Scatter(
+    #     id='scatter-graph',
+    #     figure={
+    #         'data': [
+    #             {'x': pos, 'y': net_helpfulness},
+    #             # {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
+    #             # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
+    #         ],
+    #         'layout': {
+    #             'title': 'Users Positivity vs Helpfulness'
+    #         }
+    #     }
+    # ),
 
     dcc.Graph(
         id='star-graph',
