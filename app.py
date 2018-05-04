@@ -22,7 +22,7 @@ rows = session.execute('SELECT reviewerid, avg_star FROM data')
 
 stars = []
 for i in range(5):
-    stars += rows[i].avg_star
+    stars.append(rows[i].avg_star)
 
 
 app.layout = html.Div(children=[
