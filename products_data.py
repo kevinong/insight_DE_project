@@ -45,30 +45,12 @@ class ProductData:
         new_df = new_df.withColumn("related", flat_udf(self.df.related))
         new_df.select("related").show(10, False)
 
-        # self.df.select("categories").rdd.map(lambda row:(row[0], reduce(lambda x,y:x+y, row[1]))).toDF().show(10)
 
-        # flattenUdf = functions.udf(fudf, ArrayType(StringType()))
-        # self.df.select(flattenUdf("categories").alias("categories")).show(10)
-
-        # flatten = lambda l: [item for sublist in l for item in sublist]
-        # flatlist_udf = functions.udf(lambda categories: [item for sublist in categories for item in sublist], ArrayType(StringType()))
-        # self.df = self.df.withColumn("categories", flattenUdf(self.df.categories))
-        
-
-
-        # self.df = self.df.withColumn("cat2", flatten_udf(self.df.categories))
-
-        # self.df.show(10)
-
-        # new_df = self.df.select("categories").rdd.map(lambda val: reduce(custom, val)).toDF()
-        # new_df = self.df.select("categories").rdd.map(lambda val: val[0]).toDF()
-        # print new_df.dtypes
-        # new_df.select('_1').show(10)
 
 if __name__ == "__main__":
     conf = SparkConf().setAppName("test")
     sc = SparkContext(conf = conf)
-    
+
     products_path = get_s3_path(BUCKET, 'product', 'meta_Toys_and_Games.json')
     # products_path = get_s3_path(BUCKET, "product", "metadata.json")
 
