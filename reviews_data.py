@@ -105,10 +105,13 @@ if __name__ == "__main__":
     sc = SparkContext(conf = conf)
 
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
-    reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
-    products_path = get_s3_path(BUCKET, "product", "metadata.json")
+    # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
+    # products_path = get_s3_path(BUCKET, "product", "metadata.json")
 
-    productsData = products_data.ProductData(products_path, conf, sc)
+    reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Toys_and_Games.json")
+    products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
+
+    productsData = ProductData(products_path, conf, sc)
     productsData.main()
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
