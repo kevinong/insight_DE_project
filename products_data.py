@@ -36,10 +36,10 @@ class ProductData:
         flat_udf = functions.udf(flat, ArrayType(StringType()))
 
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))
-        self.df.select("categories").show(10, False)
+        # self.df.select("categories").show(10, False)
 
         self.df = self.df.withColumn("related", flat_udf(self.df.related))
-        self.df.select("related").show(10, False)
+        # self.df.select("related").show(10, False)
 
 
 

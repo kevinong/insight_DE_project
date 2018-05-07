@@ -41,10 +41,10 @@ class ProductData:
         flat_udf = functions.udf(flat, ArrayType(StringType()))
 
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))
-        self.df.select("categories").show(10, False)
+        # self.df.select("categories").show(10, False)
 
         self.df = self.df.withColumn("related", flat_udf(self.df.related))
-        self.df.select("related").show(10, False)
+        # self.df.select("related").show(10, False)
 
 
 class ReviewsData:
@@ -54,8 +54,8 @@ class ReviewsData:
             options(header='true', inferSchema='true').\
             load(path)
 
-    def joinfDF(self, prod_df):
-        self.df = self.df.join(prod_df, self.df.asin == prod_df.asin)
+    def joinDF(self, prod_df):
+        self.df = self.df.join(prod_df, self.df.asin == prod_df.asin, 'outer')
 
     def main(self, prod_df):
 
@@ -144,8 +144,12 @@ if __name__ == "__main__":
     productsData = ProductData(products_path, conf, sc)
     productsData.main()
 
+    prod_df = productsData.df.select("asin", "categories", "related")
+    print 'show product data'
+    prod_df.show(10)
+
     reviewsData = ReviewsData(reviews_path, conf, sc)
-    reviewsData.main(productsData.df.select("asin", "categories", "related"))
+    reviewsData.main(prod_df)
 
 
 
