@@ -22,12 +22,12 @@ def get_s3_path(bucket_name, folder_name=None, file_name=None):
 def flat(cat):
     result = Set()
     if cat is None:
-        return list(res)
+        return list(result)
     for c in cat:
         if c is not None:
             result.add(c)
 
-    return list(res)
+    return list(result)
 
 class ProductData:
     def __init__(self, path, conf, sc):
