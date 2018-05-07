@@ -79,8 +79,8 @@ class ReviewsData:
                                                                functions.sum("pos_review_count"),\
                                                                functions.sum("neg_polarity").alias("neg"),\
                                                                functions.sum("neg_review_count"),\
-                                                               functions.avg("subjectivity").alias("subjectivity")),\
-                                                               functions.concat_ws(',', self.reviews_df.asin)
+                                                               functions.avg("subjectivity").alias("subjectivity"),\
+                                                               functions.collect_set("asin").alias("products"))
 
         grouped_df.show(20)
 
