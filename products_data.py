@@ -6,6 +6,7 @@ from pyspark.sql.types import FloatType, ArrayType, StringType
 
 from textblob import TextBlob
 import datetime
+from sets import Set
 
 BUCKET = "amazon-data-insight"
 
@@ -19,14 +20,14 @@ def get_s3_path(bucket_name, folder_name=None, file_name=None):
 
     return path
 def flat(cat):
-    res = []
+    result = Set()
     if cat is None:
-        return res
+        return list(res)
     for c in cat:
-        if c is not None and c not in res:
-            res += c
+        if c is not None:
+            result.add(c)
 
-    return res
+    return list(res)
 
 class ProductData:
     def __init__(self, path, conf, sc):
