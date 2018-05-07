@@ -2,7 +2,7 @@ import findspark
 findspark.init()
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions
-from pyspark.sql.types import FloatType, ArrayType, StringType
+from pyspark.sql.types import FloatType, ArrayType, StringType, IntegerType
 
 from textblob import TextBlob
 import datetime
@@ -44,8 +44,9 @@ class ReviewsData:
 
         pos_polarity_udf = functions.udf(lambda pol: pol if pol > 0 else 0.0, FloatType())
         neg_polarity_udf = functions.udf(lambda pol: pol if pol < 0 else 0.0, FloatType())
-        # polarity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.polarity, FloatType())
-        # subjectivity_udf = functions.udf(lambda sentiment: self.reviews_df.sentiment.subjectivity_udf, FloatType())
+        
+        pos_count_udf = functions.udf(lambda pol: 1 if pol > 0 else 0, IntegerType())
+        neg_count_udf = functions.udf(lambda pol: 1 if pol < 0 else 0, IntegerType())
 
         print "start transform 1: ", datetime.datetime.now()
         # Transforming review data
@@ -62,18 +63,10 @@ class ReviewsData:
                             .withColumn("pos_polarity", pos_polarity_udf(self.reviews_df.polarity))\
                             .withColumn("neg_polarity", neg_polarity_udf(self.reviews_df.polarity))\
                             .withColumnRenamed("reviewerID", "reviewerid")
+                            .withColumn("pos_review_count", pos_count_udf(self.reviews_df.polarity))\
+                            .withColumn("neg_review_count", neg_count_udf(self.reviews_df.polarity))
 
-                            # .withColumn("polarity", self.reviews_df.sentiment[0])\
-                            # .withColumn("subjectivity", self.reviews_df.sentiment[1])\
-                            # .withColumn("helpful", self.reviews_df.helpful[0] - self.reviews_df.helpful[1])
-                            # .withColumn("polarity", self) \
-                            # .withColumn("subjectivity_udf", subjectivity_udf)
 
-                                    # .withColumn("pos_polarity", pos_polarity_udf(functions.col("polarity")))\
-                            # .withColumn("neg_polarity", neg_polarity_udf(functions.col("polarity")))\
-
-        # self.reviews_df = self.reviews_df.withColumn("polarity", self.reviews_df.sentiment[0])\
-                            # .withColumn("subjectivity", self.reviews_df.sentiment[1])
 
         print 'transformation done: ', datetime.datetime.now()
         self.reviews_df.show(5)
@@ -83,8 +76,11 @@ class ReviewsData:
                                                                functions.sum("unhelpful_vote").alias("unhelpful"), \
                                                                functions.avg("polarity").alias("avg_pol"), \
                                                                functions.sum("pos_polarity").alias("pos"), \
-                                                               functions.sum("neg_polarity").alias("neg"), \
-                                                               functions.avg("subjectivity").alias("subjectivity"))
+                                                               functions.sum("pos_review_count"),\
+                                                               functions.sum("neg_polarity").alias("neg"),\
+                                                               functions.sum("neg_review_count"),\
+                                                               functions.avg("subjectivity").alias("subjectivity")),\
+                                                               functions.concat_ws(',', self.reviews_df.asin)
 
         grouped_df.show(20)
 
