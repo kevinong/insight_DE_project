@@ -62,7 +62,7 @@ class ReviewsData:
         self.reviews_df = self.reviews_df\
                             .withColumn("pos_polarity", pos_polarity_udf(self.reviews_df.polarity))\
                             .withColumn("neg_polarity", neg_polarity_udf(self.reviews_df.polarity))\
-                            .withColumnRenamed("reviewerID", "reviewerid")
+                            .withColumnRenamed("reviewerID", "reviewerid")\
                             .withColumn("pos_review_count", pos_count_udf(self.reviews_df.polarity))\
                             .withColumn("neg_review_count", neg_count_udf(self.reviews_df.polarity))
 
