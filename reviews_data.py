@@ -8,6 +8,7 @@ from textblob import TextBlob
 import datetime
 
 from util import get_s3_path
+from products_data import ProductData
 
 
 BUCKET = "amazon-data-insight"
@@ -23,7 +24,10 @@ class ReviewsData:
             options(header='true', inferSchema='true').\
             load(path)
 
-    def main(self):
+    def joinfDF(self, prod_df):
+        self.df = self.df.join(prod_df, self.df.asin == prod_df.asin)
+
+    def main(self, prod_df):
 
         self.df.show(5)
 
@@ -61,6 +65,10 @@ class ReviewsData:
         print 'transformation done: ', datetime.datetime.now()
         self.df.show(5)
 
+        print 'join', datetime.datetime.now()
+        self.joinDF(prod_df)
+        self.df.show(5)
+
         grouped_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
                                                                functions.sum("helpful_vote").alias("helpful"), \
                                                                functions.sum("unhelpful_vote").alias("unhelpful"), \
@@ -93,9 +101,13 @@ if __name__ == "__main__":
 
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
     reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
+    products_path = get_s3_path(BUCKET, "product", "metadata.json")
+
+    productsData = ProductData(products_path, conf, sc)
+    productsData.main()
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
-    reviewsData.main()
+    reviewsData.main(productsData.df.select("asin", "categories", "related"))
 
 
 
