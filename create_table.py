@@ -12,7 +12,7 @@ session.execute('CREATE KEYSPACE ' + CASSANDRA_NAMESPACE  + ' WITH replication =
 session.execute('USE ' + CASSANDRA_NAMESPACE)
 
 session.execute('DROP TABLE IF EXISTS data;')
-session.execute('CREATE TABLE data (reviewerID text, avg_star float, helpful int, unhelpful int, avg_pol float, pos float, neg float, subjectivity float, products list, categories list, PRIMARY KEY (reviewerID));')
+session.execute('CREATE TABLE data (reviewerID text, avg_star float, helpful int, unhelpful int, avg_pol float, pos float, pos_review_count int, neg float, neg_review_count int, subjectivity float, products set<blob>, categories set<blob>, PRIMARY KEY (reviewerID));')
 
 # grouped_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
 #                                                                functions.sum("helpful_vote").alias("helpful"), \

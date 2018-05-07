@@ -8,7 +8,7 @@ from textblob import TextBlob
 import datetime
 
 from util import get_s3_path
-import products_data
+#import products_data
 
 
 BUCKET = "amazon-data-insight"
@@ -55,7 +55,7 @@ class ReviewsData:
             load(path)
 
     def joinDF(self, prod_df):
-        prod_df.withColumnRenamed('asin', 'asin2')
+        prod_df = prod_df.withColumnRenamed('asin', 'asin2')
         self.df = self.df.join(prod_df, self.df.asin == prod_df.asin2)
 
     def main(self, prod_df):
@@ -89,8 +89,8 @@ class ReviewsData:
                             .withColumn("neg_polarity", neg_polarity_udf(self.df.polarity))\
                             .withColumnRenamed("reviewerID", "reviewerid")\
                             .withColumn("pos_review_count", pos_count_udf(self.df.polarity))\
-                            .withColumn("neg_review_count", neg_count_udf(self.df.polarity))\
-                            .withColumnRenamed("categories", "cat")
+                            .withColumn("neg_review_count", neg_count_udf(self.df.polarity))
+#                            .withColumnRenamed("categories", "cat")
 
 
 
@@ -108,18 +108,19 @@ class ReviewsData:
                                                                functions.sum("unhelpful_vote").alias("unhelpful"), \
                                                                functions.avg("polarity").alias("avg_pol"), \
                                                                functions.sum("pos_polarity").alias("pos"), \
-                                                               functions.sum("pos_review_count"),\
+                                                               functions.sum("pos_review_count").alias("pos_review_count"),\
                                                                functions.sum("neg_polarity").alias("neg"),\
-                                                               functions.sum("neg_review_count"),\
+                                                               functions.sum("neg_review_count").alias("neg_review_count"),\
                                                                functions.avg("subjectivity").alias("subjectivity"),\
                                                                functions.collect_set("asin").alias("products"),\
-                                                               functions.collect_set("cat"))
+                                                               functions.collect_set("categories").alias("categories"))
 
         print 'group done'
+#        grouped_df.write.format("txt").save("df.txt")
+#        grouped_df.rdd.saveAsTextFile("df.txt")
+ #       grouped_df.show(20)
 
-        grouped_df.show(20)
-
-        # grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
+        grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
         # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
