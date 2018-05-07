@@ -128,14 +128,16 @@ class ReviewsData:
 
 if __name__ == "__main__":
 
-    # aws_access_key = os.getenv('AWS_ACCESS_KEY_ID', 'default')
-    # aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY', 'default')
+    aws_access_key = os.getenv('AWS_ACCESS_KEY_ID', 'default')
+    aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY', 'default')
     # fs = s3fs.S3FileSystem(anon = True)
     # print(fs.ls('s3a://{}/{}/'.format(BUCKET, 'qa')))
 
 
     conf = SparkConf().setAppName("test").set("spark.driver.maxResultSize", "2g").set("spark.driver.memory", "3g")
     sc = SparkContext(conf = conf)
+    sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", aws_access_key)
+    sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", aws_secret_access_key)
 
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
