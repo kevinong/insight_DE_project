@@ -55,7 +55,8 @@ class ReviewsData:
             load(path)
 
     def joinDF(self, prod_df):
-        self.df = self.df.join(prod_df, self.df.asin == prod_df.asin, 'outer')
+        prod_df.withColumnRenamed('asin', 'asin2')
+        self.df = self.df.join(prod_df, self.df.asin == prod_df.asin2)
 
     def main(self, prod_df):
 
@@ -88,7 +89,8 @@ class ReviewsData:
                             .withColumn("neg_polarity", neg_polarity_udf(self.df.polarity))\
                             .withColumnRenamed("reviewerID", "reviewerid")\
                             .withColumn("pos_review_count", pos_count_udf(self.df.polarity))\
-                            .withColumn("neg_review_count", neg_count_udf(self.df.polarity))
+                            .withColumn("neg_review_count", neg_count_udf(self.df.polarity))\
+                            .withColumnRenamed("categories", "cat")
 
 
 
@@ -111,7 +113,7 @@ class ReviewsData:
                                                                functions.sum("neg_review_count"),\
                                                                functions.avg("subjectivity").alias("subjectivity"),\
                                                                functions.collect_set("asin").alias("products"),\
-                                                               functions.collect_set("categories"))
+                                                               functions.collect_set("cat"))
 
         print 'group done'
 
