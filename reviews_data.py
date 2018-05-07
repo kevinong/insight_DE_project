@@ -134,7 +134,7 @@ if __name__ == "__main__":
     # print(fs.ls('s3a://{}/{}/'.format(BUCKET, 'qa')))
 
 
-    conf = SparkConf().setAppName("test")
+    conf = SparkConf().setAppName("test").set("spark.driver.maxResultSize", "2g").set("spark.driver.memory", "3g")
     sc = SparkContext(conf = conf)
 
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
