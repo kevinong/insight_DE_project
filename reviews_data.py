@@ -8,7 +8,7 @@ from textblob import TextBlob
 import datetime
 
 from util import get_s3_path
-from products_data import ProductData
+import products_data
 
 
 BUCKET = "amazon-data-insight"
@@ -29,7 +29,7 @@ class ReviewsData:
 
     def main(self, prod_df):
 
-        self.df.show(5)
+        # self.df.show(5)
 
         print "start time: ", datetime.datetime.now()
 
@@ -50,7 +50,7 @@ class ReviewsData:
                             .withColumn("helpful_vote", self.df.helpful[0])\
                             .withColumn("unhelpful_vote", self.df.helpful[1])
 
-        self.df.show(5)
+        # self.df.show(5)
         print "start transfrom 2: ", datetime.datetime.now()
 
         self.df = self.df\
@@ -63,11 +63,13 @@ class ReviewsData:
 
 
         print 'transformation done: ', datetime.datetime.now()
-        self.df.show(5)
+        # self.df.show(5)
 
         print 'join', datetime.datetime.now()
         self.joinDF(prod_df)
-        self.df.show(5)
+        # self.df.show(5)
+
+        print 'join done'
 
         grouped_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
                                                                functions.sum("helpful_vote").alias("helpful"), \
@@ -78,7 +80,10 @@ class ReviewsData:
                                                                functions.sum("neg_polarity").alias("neg"),\
                                                                functions.sum("neg_review_count"),\
                                                                functions.avg("subjectivity").alias("subjectivity"),\
-                                                               functions.collect_set("asin").alias("products"))
+                                                               functions.collect_set("asin").alias("products"),\
+                                                               functions.collect_set("categories"))
+
+        print 'group done'
 
         grouped_df.show(20)
 
@@ -103,7 +108,7 @@ if __name__ == "__main__":
     reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
     products_path = get_s3_path(BUCKET, "product", "metadata.json")
 
-    productsData = ProductData(products_path, conf, sc)
+    productsData = products_data.ProductData(products_path, conf, sc)
     productsData.main()
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
