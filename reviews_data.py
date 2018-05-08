@@ -130,7 +130,7 @@ def joinDF2(rev_df, prod_df):
     prod_df = prod_df.withColumnRenamed('asin', 'asin2')
     joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.asin2)
 
-    joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories".alias("categories")))
+    joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories").alias("categories"))
 
     # joined_df = joined_df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
     #                                                functions.sum("helpful_vote").alias("helpful"), \
