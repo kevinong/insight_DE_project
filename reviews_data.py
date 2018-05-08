@@ -4,6 +4,7 @@ from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions
 from pyspark.sql.types import FloatType, ArrayType, StringType, IntegerType
 
+import os
 from textblob import TextBlob
 import datetime
 
