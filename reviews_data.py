@@ -136,8 +136,10 @@ if __name__ == "__main__":
 
     conf = SparkConf().setAppName("test").set("spark.driver.maxResultSize", "2g").set("spark.driver.memory", "3g")
     sc = SparkContext(conf = conf)
-    sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", aws_access_key)
-    sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", aws_secret_access_key)
+    # sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", aws_access_key)
+    # sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", aws_secret_access_key)
+    sc._jsc.hadoopConfiguration().set('fs.s3n.awsAccessKeyId', aws_access_key)
+    sc._jsc.hadoopConfiguration().set('fs.s3a.awsSecretAccessKey',aws_secret_access_key)
 
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
