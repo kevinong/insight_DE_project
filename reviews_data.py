@@ -128,9 +128,9 @@ class ReviewsData:
 
 def joinDF2(rev_df, prod_df):
     prod_df = prod_df.withColumnRenamed('asin', 'asin2')
-    joined_df = grouped_df.join(prod_df, rev_df.asin == prod_df.asin2)
+    joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.asin2)
 
-    joined_df = rev_df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
+    joined_df = joined_df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
                                                    functions.sum("helpful_vote").alias("helpful"), \
                                                    functions.sum("unhelpful_vote").alias("unhelpful"), \
                                                    functions.avg("polarity").alias("avg_pol"), \
