@@ -146,7 +146,7 @@ def joinDF2(rev_df, prod_df):
 
     flat_udf = functions.udf(flat, ArrayType(StringType()))
     joined_df = joined_df.withColumn("categories", flat_udf(joined_df.categories))
-    joined_df = joined_df.rdd.flatmap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
+    joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
     joined_df.pivot("category").count()
     # joined_df.show()
 
