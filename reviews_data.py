@@ -127,7 +127,10 @@ class ReviewsData:
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
 
 def joinDF2(rev_df, prod_df):
-    grouped_df = rev_df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
+    prod_df = prod_df.withColumnRenamed('asin', 'asin2')
+    joined_df = grouped_df.join(prod_df, rev_df.asin == prod_df.asin2)
+
+    joined_df = rev_df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
                                                    functions.sum("helpful_vote").alias("helpful"), \
                                                    functions.sum("unhelpful_vote").alias("unhelpful"), \
                                                    functions.avg("polarity").alias("avg_pol"), \
@@ -138,9 +141,6 @@ def joinDF2(rev_df, prod_df):
                                                    functions.avg("subjectivity").alias("subjectivity"),\
                                                    functions.collect_set("asin").alias("products"),\
                                                    functions.collect_set("categories").alias("categories"))
-
-    prod_df = prod_df.withColumnRenamed('asin', 'asin2')
-    joined_df = grouped_df.join(prod_df, rev_df.asin == prod_df.asin2)
 
     return joined_df
 
