@@ -37,7 +37,7 @@ class ProductData:
             load(path)
 
     def main(self):
-        self.df.select("categories").show(10, False)
+        # self.df.select("categories").show(10, False)
 
         flat_udf = functions.udf(flat, ArrayType(StringType()))
 
@@ -59,7 +59,7 @@ class ReviewsData:
         prod_df = prod_df.withColumnRenamed('asin', 'asin2')
         self.df = self.df.join(prod_df, self.df.asin == prod_df.asin2)
 
-    def main(self, prod_df):
+    def main(self):
 
         # self.df.show(5)
 
@@ -98,34 +98,51 @@ class ReviewsData:
         print 'transformation done: ', datetime.datetime.now()
         # self.df.show(5)
 
-        print 'join', datetime.datetime.now()
-        self.joinDF(prod_df)
-        # self.df.show(5)
+        # print 'join', datetime.datetime.now()
+        # self.joinDF(prod_df)
+        # # self.df.show(5)
 
-        print 'join done'
+        # print 'join done'
 
-        grouped_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
-                                                               functions.sum("helpful_vote").alias("helpful"), \
-                                                               functions.sum("unhelpful_vote").alias("unhelpful"), \
-                                                               functions.avg("polarity").alias("avg_pol"), \
-                                                               functions.sum("pos_polarity").alias("pos"), \
-                                                               functions.sum("pos_review_count").alias("pos_review_count"),\
-                                                               functions.sum("neg_polarity").alias("neg"),\
-                                                               functions.sum("neg_review_count").alias("neg_review_count"),\
-                                                               functions.avg("subjectivity").alias("subjectivity"),\
-                                                               functions.collect_set("asin").alias("products"),\
-                                                               functions.collect_set("categories").alias("categories"))
+        # grouped_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
+        #                                                        functions.sum("helpful_vote").alias("helpful"), \
+        #                                                        functions.sum("unhelpful_vote").alias("unhelpful"), \
+        #                                                        functions.avg("polarity").alias("avg_pol"), \
+        #                                                        functions.sum("pos_polarity").alias("pos"), \
+        #                                                        functions.sum("pos_review_count").alias("pos_review_count"),\
+        #                                                        functions.sum("neg_polarity").alias("neg"),\
+        #                                                        functions.sum("neg_review_count").alias("neg_review_count"),\
+        #                                                        functions.avg("subjectivity").alias("subjectivity"),\
+        #                                                        functions.collect_set("asin").alias("products"),\
+        #                                                        functions.collect_set("categories").alias("categories"))
 
-        print 'group done'
+        # print 'group done'
 #        grouped_df.write.format("txt").save("df.txt")
 #        grouped_df.rdd.saveAsTextFile("df.txt")
  #       grouped_df.show(20)
 
-        grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
+        # grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
         # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
 
+def joinDF2(rev_df, prod_df):
+    grouped_df = rev_df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
+                                                   functions.sum("helpful_vote").alias("helpful"), \
+                                                   functions.sum("unhelpful_vote").alias("unhelpful"), \
+                                                   functions.avg("polarity").alias("avg_pol"), \
+                                                   functions.sum("pos_polarity").alias("pos"), \
+                                                   functions.sum("pos_review_count").alias("pos_review_count"),\
+                                                   functions.sum("neg_polarity").alias("neg"),\
+                                                   functions.sum("neg_review_count").alias("neg_review_count"),\
+                                                   functions.avg("subjectivity").alias("subjectivity"),\
+                                                   functions.collect_set("asin").alias("products"),\
+                                                   functions.collect_set("categories").alias("categories"))
+
+    prod_df = prod_df.withColumnRenamed('asin', 'asin2')
+    joined_df = grouped_df.join(prod_df, rev_df.asin == prod_df.asin2)
+
+    return joined_df
 
 if __name__ == "__main__":
 
@@ -153,11 +170,14 @@ if __name__ == "__main__":
     productsData.main()
 
     prod_df = productsData.df.select("asin", "categories", "related")
-    print 'show product data'
-    prod_df.show(10)
+    # print 'show product data'
+    # prod_df.show(10)
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
-    reviewsData.main(prod_df)
+    reviewsData.main()
+
+    joined_df = joinDF2(reviewsData.df, prod_df)
+    joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
 
 
