@@ -44,7 +44,7 @@ class ProductData:
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))
         # self.df.select("categories").show(10, False)
 
-        self.df = self.df.withColumn("related", flat_udf(self.df.related))
+        # self.df = self.df.withColumn("related", flat_udf(self.df.related))
         # self.df.select("related").show(10, False)
 
 
@@ -130,18 +130,24 @@ def joinDF2(rev_df, prod_df):
     prod_df = prod_df.withColumnRenamed('asin', 'asin2')
     joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.asin2)
 
-    joined_df = joined_df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
-                                                   functions.sum("helpful_vote").alias("helpful"), \
-                                                   functions.sum("unhelpful_vote").alias("unhelpful"), \
-                                                   functions.avg("polarity").alias("avg_pol"), \
-                                                   functions.sum("pos_polarity").alias("pos"), \
-                                                   functions.sum("pos_review_count").alias("pos_review_count"),\
-                                                   functions.sum("neg_polarity").alias("neg"),\
-                                                   functions.sum("neg_review_count").alias("neg_review_count"),\
-                                                   functions.avg("subjectivity").alias("subjectivity"),\
-                                                   functions.collect_set("categories").alias("categories"))
-                                                   # functions.collect_set("asin").alias("products"))\
+    joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories".alias("categories")))
 
+    # joined_df = joined_df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
+    #                                                functions.sum("helpful_vote").alias("helpful"), \
+    #                                                functions.sum("unhelpful_vote").alias("unhelpful"), \
+    #                                                functions.avg("polarity").alias("avg_pol"), \
+    #                                                functions.sum("pos_polarity").alias("pos"), \
+    #                                                functions.sum("pos_review_count").alias("pos_review_count"),\
+    #                                                functions.sum("neg_polarity").alias("neg"),\
+    #                                                functions.sum("neg_review_count").alias("neg_review_count"),\
+    #                                                functions.avg("subjectivity").alias("subjectivity"),\
+    #                                                functions.collect_list("categories").alias("categories"))
+    #                                                # functions.collect_set("asin").alias("products"))\
+
+    flat_udf = functions.udf(flat, ArrayType(StringType()))
+    joined_df = joined_df.withColumn("categories", flat_udf(joined_df.categories))
+    joined_df = joined_df.rdd.flatmap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF("id", "category")
+    # joined_df.show()
 
     return joined_df
 
@@ -173,16 +179,17 @@ if __name__ == "__main__":
     productsData = ProductData(products_path, conf, sc)
     productsData.main()
 
-    prod_df = productsData.df.select("asin", "categories", "related")
-    # print 'show product data'
+    prod_df = productsData.df.select("asin", "categories")
+    print 'show product data'
     # prod_df.show(10)
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
     reviewsData.main()
 
     joined_df = joinDF2(reviewsData.df, prod_df)
-    joined_df.select("reviewerid", "categories").show(10, False)
-    joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
+    joined_df.show(10)
+    # joined_df.select("reviewerid", "categories").show(10, False)
+    # joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
 
 
