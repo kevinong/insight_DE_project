@@ -146,7 +146,8 @@ def joinDF2(rev_df, prod_df):
 
     flat_udf = functions.udf(flat, ArrayType(StringType()))
     joined_df = joined_df.withColumn("categories", flat_udf(joined_df.categories))
-    joined_df = joined_df.rdd.flatmap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF("id", "category")
+    joined_df = joined_df.rdd.flatmap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
+    joined_df.pivot("category").count()
     # joined_df.show()
 
     return joined_df
@@ -163,6 +164,7 @@ if __name__ == "__main__":
     sc = SparkContext(conf = conf)
     # sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", aws_access_key)
     # sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", aws_secret_access_key)
+
     sc._jsc.hadoopConfiguration().set('fs.s3n.awsAccessKeyId', aws_access_key)
     sc._jsc.hadoopConfiguration().set('fs.s3a.awsSecretAccessKey',aws_secret_access_key)
 
