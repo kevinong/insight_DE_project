@@ -139,8 +139,9 @@ def joinDF2(rev_df, prod_df):
                                                    functions.sum("neg_polarity").alias("neg"),\
                                                    functions.sum("neg_review_count").alias("neg_review_count"),\
                                                    functions.avg("subjectivity").alias("subjectivity"),\
-                                                   functions.collect_set("asin").alias("products"),\
                                                    functions.collect_set("categories").alias("categories"))
+                                                   # functions.collect_set("asin").alias("products"))\
+
 
     return joined_df
 
@@ -163,8 +164,11 @@ if __name__ == "__main__":
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
     # products_path = get_s3_path(BUCKET, "product", "metadata.json")
 
-    reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Toys_and_Games.json")
-    products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
+    # reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Toys_and_Games.json")
+    # products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
+
+    reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
+    products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
 
     productsData = ProductData(products_path, conf, sc)
     productsData.main()
@@ -177,6 +181,7 @@ if __name__ == "__main__":
     reviewsData.main()
 
     joined_df = joinDF2(reviewsData.df, prod_df)
+    joined_df.select("reviewerid", "categories").show(10, False)
     joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
 
