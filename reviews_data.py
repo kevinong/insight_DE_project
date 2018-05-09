@@ -23,14 +23,15 @@ def flat(input_list):
     if input_list is None:
         return result
     for sublist in input_list:
-    # try:
-        # sublist = input_list[0]
+    try:
         if sublist is not None:
-            for val in sublist:
-                if val is not None and val not in result:
-                    result.append(val)
+            result.append(sublist[0])
+            result.append(sublist[1])
+            # for val in sublist:
+            #     if val is not None and val not in result:
+            #         result.append(val)
     except:
-        return result
+        pass
     return result
 
 class ProductData:
@@ -43,6 +44,7 @@ class ProductData:
     def main(self):
         self.df = self.df.select("asin", "categories").na.drop(subset=["asin"])
         # self.df = self.df.na.drop(subset=["asin"])
+        self.df.select("categories").show(20, False)
         flat_udf = functions.udf(flat, ArrayType(StringType()))
 
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
