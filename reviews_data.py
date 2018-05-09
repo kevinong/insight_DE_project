@@ -3,6 +3,7 @@ findspark.init()
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions
 from pyspark.sql.types import FloatType, ArrayType, StringType, IntegerType
+from cassandra.cluster import Cluster
 
 import os
 from textblob import TextBlob
@@ -25,8 +26,8 @@ def flat(input_list):
     for sublist in input_list:
         try:
             if sublist is not None:
-                result.append(sublist[0])
-                result.append(sublist[1])
+                result.append(sublist[0].replace(',','').replace('&', '').replace(' ', '_'))
+                result.append(sublist[1].replace(',','').replace('&', '').replace(' ', '_'))
                 # for val in sublist:
                 #     if val is not None and val not in result:
                 #         result.append(val)
@@ -156,7 +157,9 @@ def joinDF(rev_df, prod_df):
     print "distinct cats: \n", joined_df.select("category").distinct().count()
     # distincts = joined_df.select("category").distinct().collect()
 
-    distincts = [i.category.replace(' ', '_') for i in joined_df.select('category').distinct().collect()]
+   # chars = re.escape(string.punctuation)
+   # print re.sub(r'['+chars+']', '',my_str)
+    distincts = [i.category.replace(',','').replace('&', '').replace(' ', '_') for i in joined_df.select('category').distinct().collect()]
     # print distincts
 
     joined_df = joined_df.groupby("reviewerid").pivot("category").count()
@@ -180,9 +183,9 @@ def createTable(distincts):
     session.execute('DROP TABLE IF EXISTS joineddata;')
     # distincts = [i.category.replace(' ', '_') for i in joined_df.select('category').distinct().collect()]
     # print distincts
-    fields = " int ,".join(distincts)
-    # print fields
-    session.execute('CREATE TABLE productdata (productid text, {}, PRIMARY KEY (productid));'.format(fields))
+    fields = " int ,".join(distincts) + ' int'
+    print fields
+    session.execute('CREATE TABLE joineddata (productid text, {}, PRIMARY KEY (productid));'.format(fields))
 
 
 if __name__ == "__main__":
