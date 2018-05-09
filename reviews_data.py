@@ -108,24 +108,27 @@ class ReviewsData:
 
         # print 'join done'
 
-        # grouped_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
-        #                                                        functions.sum("helpful_vote").alias("helpful"), \
-        #                                                        functions.sum("unhelpful_vote").alias("unhelpful"), \
-        #                                                        functions.avg("polarity").alias("avg_pol"), \
-        #                                                        functions.sum("pos_polarity").alias("pos"), \
-        #                                                        functions.sum("pos_review_count").alias("pos_review_count"),\
-        #                                                        functions.sum("neg_polarity").alias("neg"),\
-        #                                                        functions.sum("neg_review_count").alias("neg_review_count"),\
-        #                                                        functions.avg("subjectivity").alias("subjectivity"),\
-        #                                                        functions.collect_set("asin").alias("products"),\
-        #                                                        functions.collect_set("categories").alias("categories"))
+        grouped_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
+                                                               functions.sum("helpful_vote").alias("helpful"), \
+                                                               functions.sum("unhelpful_vote").alias("unhelpful"), \
+                                                               functions.avg("polarity").alias("avg_pol"), \
+                                                               functions.sum("pos_polarity").alias("pos"), \
+                                                               functions.sum("pos_review_count").alias("pos_review_count"),\
+                                                               functions.sum("neg_polarity").alias("neg"),\
+                                                               functions.sum("neg_review_count").alias("neg_review_count"),\
+                                                               functions.avg("subjectivity").alias("subjectivity"))
+                                                               # functions.collect_set("asin").alias("products"),\
+                                                               # functions.collect_set("categories").alias("categories"))
+# session.execute('CREATE TABLE data (reviewerid text,
+# avg_star float, helpful int, unhelpful int, avg_pol float, pos float, pos_review_count int, neg float, neg_review_count int, subjectivity float, PRIMARY KEY (reviewerid));')
+
 
         # print 'group done'
 #        grouped_df.write.format("txt").save("df.txt")
 #        grouped_df.rdd.saveAsTextFile("df.txt")
  #       grouped_df.show(20)
 
-        # grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
+        grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "userdata", keyspace = "amazonreviews").save()
 
         # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
@@ -193,28 +196,28 @@ if __name__ == "__main__":
     products_path = get_s3_path(BUCKET, "product", "metadata.json")
 
 #    reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Toys_and_Games.json")
-#    products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
+   # products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
 
-    #reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
+    reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
     #products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
 
-    productsData = ProductData(products_path, conf, sc)
-    productsData.main()
+    # productsData = ProductData(products_path, conf, sc)
+    # productsData.main()
 
-    prod_df = productsData.df.select("asin", "categories")
-    print 'show product data'
-    prod_df.show(10, False)
+    # prod_df = productsData.df.select("asin", "categories")
+    # print 'show product data'
+    # prod_df.show(10, False)
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
-#    reviewsData.main()
+   reviewsData.main()
 
-    print 'show review data'
-    reviewsData.df.select("reviewerID", "asin").show(10)
+    # print 'show review data'
+    # reviewsData.df.select("reviewerID", "asin").show(10)
 
-    print 'show joined data'
+    # print 'show joined data'
 
-    joined_df = joinDF2(reviewsData.df, prod_df)
-    joined_df.show(10)
+    # joined_df = joinDF2(reviewsData.df, prod_df)
+    # joined_df.show(10)
     # joined_df.select("reviewerid", "categories").show(10, False)
     # joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
