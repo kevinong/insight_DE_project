@@ -29,8 +29,8 @@ def flat(input_list):
             for val in sublist:
                 if val is not None and val not in result:
                     result.append(val)
-    except:
-        return result
+#    except:
+#        return result
     return result
 
 class ProductData:
@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
     productsData = ProductData(products_path, conf, sc)
     productsData.main()
-    productsData.df
+#    productsData.df
 
     # prod_df = productsData.df.select("asin", "categories")
     # print 'show product data'
