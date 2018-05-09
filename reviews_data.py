@@ -150,28 +150,40 @@ def joinDF(rev_df, prod_df):
 
     joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories").alias("categories"))
 
-    # joined_df = joined_df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
-    #                                                functions.sum("helpful_vote").alias("helpful"), \
-    #                                                functions.sum("unhelpful_vote").alias("unhelpful"), \
-    #                                                functions.avg("polarity").alias("avg_pol"), \
-    #                                                functions.sum("pos_polarity").alias("pos"), \
-    #                                                functions.sum("pos_review_count").alias("pos_review_count"),\
-    #                                                functions.sum("neg_polarity").alias("neg"),\
-    #                                                functions.sum("neg_review_count").alias("neg_review_count"),\
-    #                                                functions.avg("subjectivity").alias("subjectivity"),\
-    #                                                functions.collect_list("categories").alias("categories"))
-    #                                                # functions.collect_set("asin").alias("products"))\
-
     flat_udf = functions.udf(flat, ArrayType(StringType()))
     joined_df = joined_df.withColumn("categories", flat_udf(joined_df.categories))
     joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
     print "distinct cats: \n", joined_df.select("category").distinct().count()
+    # distincts = joined_df.select("category").distinct().collect()
+
+    distincts = [i.category.replace(' ', '_') for i in joined_df.select('category').distinct().collect()]
+    # print distincts
+
     joined_df = joined_df.groupby("reviewerid").pivot("category").count()
     joined_df = joined_df.na.fill(0)
 
-    # joined_df.show()
+    createTable(distincts)
+
+    joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
+
 
     return joined_df
+
+def createTable(distincts):
+    CASSANDRA_SERVER    = ['54.245.66.232', '34.214.245.150', '54.218.181.48', '54.71.237.54', '54.190.226.253', '35.165.118.115', '52.11.177.167', '34.215.123.166']
+    CASSANDRA_NAMESPACE = "amazonreviews"
+
+    cluster = Cluster(CASSANDRA_SERVER)
+    session = cluster.connect()
+
+    session.execute('USE ' + CASSANDRA_NAMESPACE)
+    session.execute('DROP TABLE IF EXISTS joineddata;')
+    # distincts = [i.category.replace(' ', '_') for i in joined_df.select('category').distinct().collect()]
+    # print distincts
+    fields = " int ,".join(distincts)
+    # print fields
+    session.execute('CREATE TABLE productdata (productid text, {}, PRIMARY KEY (productid));'.format(fields))
+
 
 if __name__ == "__main__":
 
