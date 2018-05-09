@@ -142,11 +142,11 @@ def getCat(cat):
 def joinDF(rev_df, prod_df):
 
     # getCat_udf = functions.udf(getCat, ArrayType(StringType()))
-    prod_df = prod_df.withColumnRenamed('asin', 'asin2')
+    # prod_df = prod_df.withColumnRenamed('asin', 'asin2')
                      # .withColumn("categories", getCat_udf(prod_df.categories))
     print 'show truncated prod'
     prod_df.show(10, False)
-    joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.asin2)
+    joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.productid)
 
     joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories").alias("categories"))
 
