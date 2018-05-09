@@ -32,7 +32,7 @@ def flat(input_list):
             #         result.append(val)
     except:
         pass
-        
+
     return result
 
 class ProductData:
@@ -45,15 +45,15 @@ class ProductData:
     def main(self):
         self.df = self.df.select("asin", "categories").na.drop(subset=["asin"])
         # self.df = self.df.na.drop(subset=["asin"])
-        self.df.select("categories").show(20, False)
+        # self.df.select("categories").show(20, False)
         flat_udf = functions.udf(flat, ArrayType(StringType()))
 
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
                         .withColumnRenamed("asin", "productid")
 
-        self.df.select("categories").show(20, False)
+        # self.df.select("categories").show(20, False)
 
-        self.df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "productdata", keyspace = "amazonreviews").save()
+        #self.df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "productdata", keyspace = "amazonreviews").save()
 
         # self.df.select("categories").show(10, False)
 
@@ -68,11 +68,7 @@ class ReviewsData:
             options(header='true', inferSchema='true').\
             load(path)
 
-    def joinDF(self, prod_df):
-        prod_df = prod_df.withColumnRenamed('asin', 'asin2')
-        self.df = self.df.join(prod_df, self.df.asin == prod_df.asin2)
-
-    def main(self):
+    def transform(self):
 
         # self.df.show(5)
 
@@ -107,7 +103,7 @@ class ReviewsData:
 
         print 'transformation done: ', datetime.datetime.now()
 
-        grouped_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
+        self.user_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
                                                                functions.count("overall").alias('count'),\
                                                                functions.sum("helpful_vote").alias("helpful"), \
                                                                functions.sum("unhelpful_vote").alias("unhelpful"), \
@@ -128,7 +124,7 @@ class ReviewsData:
 #        grouped_df.rdd.saveAsTextFile("df.txt")
  #       grouped_df.show(20)
 
-        grouped_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "userdata", keyspace = "amazonreviews").save()
+        self.grouped_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "userdata", keyspace = "amazonreviews").save()
 
         # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
@@ -143,11 +139,11 @@ def getCat(cat):
 
     return result
 
-def joinDF2(rev_df, prod_df):
+def joinDF(rev_df, prod_df):
 
-    getCat_udf = functions.udf(getCat, ArrayType(StringType()))
-    prod_df = prod_df.withColumnRenamed('asin', 'asin2')\
-                     .withColumn("categories", getCat_udf(prod_df.categories))
+    # getCat_udf = functions.udf(getCat, ArrayType(StringType()))
+    prod_df = prod_df.withColumnRenamed('asin', 'asin2')
+                     # .withColumn("categories", getCat_udf(prod_df.categories))
     print 'show truncated prod'
     prod_df.show(10, False)
     joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.asin2)
@@ -211,17 +207,17 @@ if __name__ == "__main__":
     # print 'show product data'
     # prod_df.show(10, False)
 
-    # reviewsData = ReviewsData(reviews_path, conf, sc)
+    reviewsData = ReviewsData(reviews_path, conf, sc)
     # reviewsData.main()
 
     # print 'show review data'
     # reviewsData.df.select("reviewerID", "asin").show(10)
 
     # print 'show joined data'
-
-    # joined_df = joinDF2(reviewsData.df, prod_df)
+    reviewsData.df = reviewsData.df.withColumnRenamed("reviewerID", "reviewerid")
+    joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), prod_df)
     # joined_df.show(10)
-    # joined_df.select("reviewerid", "categories").show(10, False)
+    joined_df.select("reviewerid", "categories").show(20, False)
     # joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
 
