@@ -22,9 +22,9 @@ def flat(input_list):
     result = []
     if input_list is None:
         return result
-    #for sublist in input_list:
-    try:
-        sublist = input_list[0]
+    for sublist in input_list:
+    # try:
+        # sublist = input_list[0]
         if sublist is not None:
             for val in sublist:
                 if val is not None and val not in result:
@@ -41,8 +41,9 @@ class ProductData:
             load(path)
 
     def main(self):
-        # self.df.select("categories").show(10, False)
-
+        self.df.select("categories").show(20, False)
+        self.df = self.df.select("asin", "categories").na.drop(subset=["asin"])
+        # self.df = self.df.na.drop(subset=["asin"])
         flat_udf = functions.udf(flat, ArrayType(StringType()))
 
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
@@ -166,6 +167,8 @@ def joinDF2(rev_df, prod_df):
     joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
     print "distinct cats: \n", joined_df.select("category").distinct().count()
     joined_df = joined_df.groupby("reviewerid").pivot("category").count()
+    joined_df = joined_df.na.fill(0)
+
     # joined_df.show()
 
     return joined_df
@@ -196,8 +199,9 @@ if __name__ == "__main__":
     reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
     products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
 
-    # productsData = ProductData(products_path, conf, sc)
-    # productsData.main()
+    productsData = ProductData(products_path, conf, sc)
+    productsData.main()
+    productsData.df
 
     # prod_df = productsData.df.select("asin", "categories")
     # print 'show product data'
