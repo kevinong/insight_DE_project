@@ -23,15 +23,15 @@ def flat(input_list):
     if input_list is None:
         return result
     for sublist in input_list:
-    try:
-        if sublist is not None:
-            result.append(sublist[0])
-            result.append(sublist[1])
-            # for val in sublist:
-            #     if val is not None and val not in result:
-            #         result.append(val)
-    except:
-        pass
+        try:
+            if sublist is not None:
+                result.append(sublist[0])
+                result.append(sublist[1])
+                # for val in sublist:
+                #     if val is not None and val not in result:
+                #         result.append(val)
+        except:
+            pass
 
     return result
 
