@@ -41,13 +41,14 @@ class ProductData:
             load(path)
 
     def main(self):
-        self.df.select("categories").show(20, False)
         self.df = self.df.select("asin", "categories").na.drop(subset=["asin"])
         # self.df = self.df.na.drop(subset=["asin"])
         flat_udf = functions.udf(flat, ArrayType(StringType()))
 
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
                         .withColumnRenamed("asin", "productid")
+
+        self.df.select("categories").show(20, False)
 
         self.df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "productdata", keyspace = "amazonreviews").save()
 
