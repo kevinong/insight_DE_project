@@ -22,11 +22,15 @@ def flat(input_list):
     result = []
     if input_list is None:
         return result
-    for sublist in input_list:
+    #for sublist in input_list:
+    try:
+        sublist = input_list[0]
         if sublist is not None:
             for val in sublist:
                 if val is not None and val not in result:
                     result.append(val)
+    except:
+        return result
     return result
 
 class ProductData:
@@ -126,8 +130,23 @@ class ReviewsData:
         # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
 
+def getCat(cat):
+    result = []
+    try:
+        result.append(cat[0])
+#        result.append(cat[1])
+    except:
+        return result
+
+    return result
+
 def joinDF2(rev_df, prod_df):
-    prod_df = prod_df.withColumnRenamed('asin', 'asin2')
+
+    getCat_udf = functions.udf(getCat, ArrayType(StringType()))
+    prod_df = prod_df.withColumnRenamed('asin', 'asin2')\
+                     .withColumn("categories", getCat_udf(prod_df.categories))
+    print 'show truncated prod'
+    prod_df.show(10, False)
     joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.asin2)
 
     joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories").alias("categories"))
@@ -147,7 +166,8 @@ def joinDF2(rev_df, prod_df):
     flat_udf = functions.udf(flat, ArrayType(StringType()))
     joined_df = joined_df.withColumn("categories", flat_udf(joined_df.categories))
     joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
-    joined_df.groupby("reviewerid").pivot("category").count()
+    print "distinct cats: \n", joined_df.select("category").distinct().count()
+    joined_df = joined_df.groupby("reviewerid").pivot("category").count()
     # joined_df.show()
 
     return joined_df
@@ -160,7 +180,7 @@ if __name__ == "__main__":
     # print(fs.ls('s3a://{}/{}/'.format(BUCKET, 'qa')))
 
 
-    conf = SparkConf().setAppName("test").set("spark.driver.maxResultSize", "2g").set("spark.driver.memory", "3g")
+    conf = SparkConf().setAppName("test").set("spark.driver.maxResultSize", "2g").set("spark.driver.memory", "3g").set("spark.sql.pivotMaxValues", 1000000)
     sc = SparkContext(conf = conf)
     # sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", aws_access_key)
     # sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", aws_secret_access_key)
@@ -169,24 +189,29 @@ if __name__ == "__main__":
     sc._jsc.hadoopConfiguration().set('fs.s3a.awsSecretAccessKey',aws_secret_access_key)
 
     # reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
-    # reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
-    # products_path = get_s3_path(BUCKET, "product", "metadata.json")
+    reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
+    products_path = get_s3_path(BUCKET, "product", "metadata.json")
 
-    # reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Toys_and_Games.json")
-    # products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
+#    reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Toys_and_Games.json")
+#    products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
 
-    reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
-    products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
+    #reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
+    #products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
 
     productsData = ProductData(products_path, conf, sc)
     productsData.main()
 
     prod_df = productsData.df.select("asin", "categories")
     print 'show product data'
-    # prod_df.show(10)
+    prod_df.show(10, False)
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
-    reviewsData.main()
+#    reviewsData.main()
+
+    print 'show review data'
+    reviewsData.df.select("reviewerID", "asin").show(10)
+
+    print 'show joined data'
 
     joined_df = joinDF2(reviewsData.df, prod_df)
     joined_df.show(10)
