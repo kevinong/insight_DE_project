@@ -32,6 +32,7 @@ def flat(input_list):
             #         result.append(val)
     except:
         pass
+        
     return result
 
 class ProductData:
@@ -204,7 +205,7 @@ if __name__ == "__main__":
 
     productsData = ProductData(products_path, conf, sc)
     productsData.main()
-    productsData.df
+#    productsData.df
 
     # prod_df = productsData.df.select("asin", "categories")
     # print 'show product data'
