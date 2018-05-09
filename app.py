@@ -36,11 +36,18 @@ for i in range(10):
 pos = []
 net_helpfulness = []
 user_id = []
+# for i in range(1000):
+#     pos.append(rows[i].pos/rows[i].pos_review_count)
+#     net_helpfulness.append(rows[i].helpful)
+#     user_id.append(rows[i].reviewerid)
+
 for i in range(1000):
-    pos.append(rows[i].pos/rows[i].pos_review_count)
+    if rows[i].pos_review_count == 0:
+        pos.append(0)
+    else:
+        pos.append(rows[i].pos/rows[i].pos_review_count)
     net_helpfulness.append(rows[i].helpful)
     user_id.append(rows[i].reviewerid)
-
 
 app.layout = html.Div(children=[
     html.H1(children='Find the right users for a product'),
