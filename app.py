@@ -11,15 +11,15 @@ app = dash.Dash(__name__, server = server)
 
 from cassandra.cluster import Cluster
 
-CASSANDRA_SERVER    = ['54.245.66.232', '54.218.181.48', '54.71.237.54', '52.13.222.70']
-CASSANDRA_NAMESPACE = "AmazonReviews"
+CASSANDRA_SERVER    = ['54.245.66.232', '34.214.245.150', '54.218.181.48', '54.71.237.54', '54.190.226.253', '35.165.118.115', '52.11.177.167', '34.215.123.166']
+CASSANDRA_NAMESPACE = "amazonreviews"
 
 cluster = Cluster(CASSANDRA_SERVER)
 session = cluster.connect()
 
 session.execute("USE " + CASSANDRA_NAMESPACE)
 
-rows = session.execute('SELECT * FROM data')
+rows = session.execute('SELECT * FROM userdata')
 
 stars = []
 helpfulness = []
