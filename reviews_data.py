@@ -227,7 +227,7 @@ if __name__ == "__main__":
 
     # print 'show joined data'
     reviewsData.df = reviewsData.df.withColumnRenamed("reviewerID", "reviewerid")
-    joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), prod_df)
+    joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
     # joined_df.show(10)
     joined_df.select("reviewerid", "categories").show(20, False)
     # joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
