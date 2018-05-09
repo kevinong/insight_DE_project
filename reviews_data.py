@@ -128,7 +128,7 @@ class ReviewsData:
 #        grouped_df.rdd.saveAsTextFile("df.txt")
  #       grouped_df.show(20)
 
-        grouped_df.write.format("org.apache.spark.sql.cassandra").options(table = "userdata", keyspace = "amazonreviews").save()
+        grouped_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "userdata", keyspace = "amazonreviews").save()
 
         # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
@@ -209,7 +209,7 @@ if __name__ == "__main__":
     # prod_df.show(10, False)
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
-   reviewsData.main()
+    reviewsData.main()
 
     # print 'show review data'
     # reviewsData.df.select("reviewerID", "asin").show(10)
