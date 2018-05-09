@@ -45,7 +45,11 @@ class ProductData:
 
         flat_udf = functions.udf(flat, ArrayType(StringType()))
 
-        self.df = self.df.withColumn("categories", flat_udf(self.df.categories))
+        self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
+                        .withColumnRenamed("asin", "productid")
+
+        self.df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "productdata", keyspace = "amazonreviews").save()
+
         # self.df.select("categories").show(10, False)
 
         # self.df = self.df.withColumn("related", flat_udf(self.df.related))
@@ -95,20 +99,11 @@ class ReviewsData:
                             .withColumnRenamed("reviewerID", "reviewerid")\
                             .withColumn("pos_review_count", pos_count_udf(self.df.polarity))\
                             .withColumn("neg_review_count", neg_count_udf(self.df.polarity))
-#                            .withColumnRenamed("categories", "cat")
-
-
 
         print 'transformation done: ', datetime.datetime.now()
-        # self.df.show(5)
-
-        # print 'join', datetime.datetime.now()
-        # self.joinDF(prod_df)
-        # # self.df.show(5)
-
-        # print 'join done'
 
         grouped_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
+                                                               functions.count("overall").alias('count'),\
                                                                functions.sum("helpful_vote").alias("helpful"), \
                                                                functions.sum("unhelpful_vote").alias("unhelpful"), \
                                                                functions.avg("polarity").alias("avg_pol"), \
@@ -199,7 +194,7 @@ if __name__ == "__main__":
    # products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
 
     reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
-    #products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
+    products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
 
     # productsData = ProductData(products_path, conf, sc)
     # productsData.main()
@@ -208,8 +203,8 @@ if __name__ == "__main__":
     # print 'show product data'
     # prod_df.show(10, False)
 
-    reviewsData = ReviewsData(reviews_path, conf, sc)
-    reviewsData.main()
+    # reviewsData = ReviewsData(reviews_path, conf, sc)
+    # reviewsData.main()
 
     # print 'show review data'
     # reviewsData.df.select("reviewerID", "asin").show(10)

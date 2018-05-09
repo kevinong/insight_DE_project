@@ -11,8 +11,10 @@ session.execute('DROP KEYSPACE IF EXISTS '+CASSANDRA_NAMESPACE + ';')
 session.execute('CREATE KEYSPACE ' + CASSANDRA_NAMESPACE  + ' WITH replication = {\'class\': \'SimpleStrategy\', \'replication_factor\' : 3};')
 session.execute('USE ' + CASSANDRA_NAMESPACE)
 
-session.execute('DROP TABLE IF EXISTS userdata;')
-session.execute('CREATE TABLE userdata (reviewerid text, avg_star float, helpful int, unhelpful int, avg_pol float, pos float, pos_review_count int, neg float, neg_review_count int, subjectivity float, PRIMARY KEY (reviewerid));')
+# session.execute('DROP TABLE IF EXISTS userdata;')
+# session.execute('CREATE TABLE userdata (reviewerid text, avg_star float, count int, helpful int, unhelpful int, avg_pol float, pos float, pos_review_count int, neg float, neg_review_count int, subjectivity float, PRIMARY KEY (reviewerid));')
+session.execute('DROP TABLE IF EXISTS productdata;')
+session.execute('CREATE TABLE productdata (productid text, categories set<text>, PRIMARY KEY (productid));')
 
 # grouped_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
 #                                                                functions.sum("helpful_vote").alias("helpful"), \

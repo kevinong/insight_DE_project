@@ -1,0 +1,10 @@
+Hi everyone, my name is Kevin and my project is GoodReviews, which recommend reviewers for products. 
+
+The motivation is simple: to get good reviews and thus increase revenue. If there are multiple product options available, most online buyers would rely heavily on user reviews to make decisions on whether to purchuse the item or not. So, if the business owner can find quality reviewers for their products and therefore helpful reviews, the sales might go up.
+
+In this demo, you can see that these are the reviewers that have the most reviews for other products within this product's category, and there are dashboards to capture the statistics. So in this plot, ...
+
+There are a few challenges that I have faced. One of them is joining two datasets, the user review dataset, and the products data set. 
+- separate into two tables
+- sacrifice diskspace for efficiency
+
