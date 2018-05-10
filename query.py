@@ -8,11 +8,5 @@ session = cluster.connect()
 
 session.execute("USE " + CASSANDRA_NAMESPACE)
 
-rows = session.execute('SELECT reviewerid, avg_star FROM data')
-
-counter = 0
-for user_row in rows:
-    if counter > 5:
-        break
-    counter += 1
-    print user_row.reviewerID, user_row.avg_star
+product_rows = session.execute('SELECT * FROM productData')
+# user_cat_rows = session.execute('SELECT * FROM joineddata')
