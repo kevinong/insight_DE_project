@@ -26,8 +26,8 @@ def flat(input_list):
     for sublist in input_list:
         try:
             if sublist is not None:
-                result.append(sublist[0].replace(',','').replace('&', '').replace(' ', '_'))
-                result.append(sublist[1].replace(',','').replace('&', '').replace(' ', '_'))
+                result.append(sublist[0].replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
+                result.append(sublist[1].replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
                 # for val in sublist:
                 #     if val is not None and val not in result:
                 #         result.append(val)
@@ -167,7 +167,8 @@ def joinDF(rev_df, prod_df):
     joined_df = joined_df.na.fill(0)
 
     createTable(distincts)
-
+    joined_df = joined_df.drop("categories")
+    joined_df.show(10)
     joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
 
 
@@ -188,7 +189,7 @@ def createTable(distincts):
     print 'CREATING TABLE\n'
     print fields
 
-    cql_command = 'CREATE TABLE joineddata (reviewerid text, {}, PRIMARY KEY (productid));'.format(fields)
+    cql_command = 'CREATE TABLE joineddata (reviewerid text, {}, PRIMARY KEY (reviewerid));'.format(fields)
     print 'CQL COMMAND \n'
     print cql_command
     session.execute(cql_command)
