@@ -35,9 +35,6 @@ def flat(input_list):
             if sublist is not None:
                 result.append(sublist[0].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
                 result.append(sublist[1].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
-                # for val in sublist:
-                #     if val is not None and val not in result:
-                #         result.append(val)
         except:
             pass
 
@@ -52,25 +49,19 @@ class ProductData:
 
     def main(self):
         self.df = self.df.select("asin", "categories").na.drop(subset=["asin"])
-        # self.df = self.df.na.drop(subset=["asin"])
-        # self.df.select("categories").show(20, False)
-        flat_udf = functions.udf(flat, ArrayType(StringType()))
 
+        print 'prod before flat \n'
+        self.df.show(10, False)
+
+        flat_udf = functions.udf(flat, ArrayType(StringType()))
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
                         .withColumnRenamed("asin", "productid")
 
+        print 'prod after flat prod\n'
         self.df.show(10, False)
 
-        # self.df.write.jdbc(url=postgres_url, table='products', mode='overwrite', properties=postgres_properties)
-        print 'saved'
-        # self.df.select("categories").show(20, False)
-
-        #self.df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "productdata", keyspace = "amazonreviews").save()
-
-        # self.df.select("categories").show(10, False)
-
-        # self.df = self.df.withColumn("related", flat_udf(self.df.related))
-        # self.df.select("related").show(10, False)
+        self.df.write.jdbc(url=postgres_url, table='products', mode='overwrite', properties=postgres_properties)
+        print 'prod saved'
 
 
 class ReviewsData:
@@ -81,9 +72,6 @@ class ReviewsData:
             load(path)
 
     def transform(self):
-
-        print "start time: ", datetime.datetime.now()
-
         polarity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
         subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
 
@@ -93,16 +81,11 @@ class ReviewsData:
         pos_count_udf = functions.udf(lambda pol: 1 if pol > 0 else 0, IntegerType())
         neg_count_udf = functions.udf(lambda pol: 1 if pol < 0 else 0, IntegerType())
 
-        print "start transform 1: ", datetime.datetime.now()
-        # Transforming review data
         self.df = self.df\
                             .withColumn("polarity", polarity_udf(self.df.reviewText))\
                             .withColumn("subjectivity", subjectivity_udf(self.df.reviewText))\
                             .withColumn("helpful_vote", self.df.helpful[0])\
                             .withColumn("unhelpful_vote", self.df.helpful[1])
-
-        # self.df.show(5)
-        print "start transfrom 2: ", datetime.datetime.now()
 
         self.df = self.df\
                             .withColumn("pos_polarity", pos_polarity_udf(self.df.polarity))\
@@ -110,8 +93,6 @@ class ReviewsData:
                             .withColumnRenamed("reviewerID", "reviewerid")\
                             .withColumn("pos_review_count", pos_count_udf(self.df.polarity))\
                             .withColumn("neg_review_count", neg_count_udf(self.df.polarity))
-
-        print 'transformation done: ', datetime.datetime.now()
 
         self.user_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
                                                                functions.count("overall").alias('count'),\
@@ -126,36 +107,10 @@ class ReviewsData:
                                                                # functions.collect_set("asin").alias("products"),\
                                                                # functions.collect_set("categories").alias("categories"))
         self.user_df.write.jdbc(url=postgres_url, table='users', mode='overwrite', properties=postgres_properties)
-# session.execute('CREATE TABLE data (reviewerid text,
-# avg_star float, helpful int, unhelpful int, avg_pol float, pos float, pos_review_count int, neg float, neg_review_count int, subjectivity float, PRIMARY KEY (reviewerid));')
 
-
-        # print 'group done'
-#        grouped_df.write.format("txt").save("df.txt")
-#        grouped_df.rdd.saveAsTextFile("df.txt")
- #       grouped_df.show(20)
-
-        # self.grouped_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "userdata", keyspace = "amazonreviews").save()
-
-        # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
-        # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
-
-def getCat(cat):
-    result = []
-    try:
-        result.append(cat[0])
-#        result.append(cat[1])
-    except:
-        return result
-
-    return result
 
 def joinDF(rev_df, prod_df):
-
-    # getCat_udf = functions.udf(getCat, ArrayType(StringType()))
-    # prod_df = prod_df.withColumnRenamed('asin', 'asin2')
-                     # .withColumn("categories", getCat_udf(prod_df.categories))
-    print 'show truncated prod'
+    print 'prod before join'
     prod_df.show(10, False)
     joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.productid)
 
@@ -165,10 +120,7 @@ def joinDF(rev_df, prod_df):
     joined_df = joined_df.withColumn("categories", flat_udf(joined_df.categories))
     joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
     print "distinct cats: \n", joined_df.select("category").distinct().count()
-    # distincts = joined_df.select("category").distinct().collect()
-
-   # chars = re.escape(string.punctuation)
-   # print re.sub(r'['+chars+']', '',my_str)
+    
     distincts = [i.category for i in joined_df.select('category').distinct().collect()]
     print "DISTINCT CATEGORIES \n"
     print distincts
@@ -177,8 +129,8 @@ def joinDF(rev_df, prod_df):
     joined_df = joined_df.na.fill(0)
 
     createTable(distincts)
-    joined_df = joined_df.drop("categories")
-    joined_df.printSchema()
+    # joined_df = joined_df.drop("categories")
+    # joined_df.printSchema()
     joined_df.show(10)
     # joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
     self.joined_df.write.jdbc(url=postgres_url, table='joined', mode='overwrite', properties=postgres_properties)
@@ -257,7 +209,7 @@ if __name__ == "__main__":
     # prod_df.show(10, False)
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
-    # reviewsData.transform()
+    reviewsData.transform()
 
     # print 'show review data'
     # reviewsData.df.select("reviewerID", "asin").show(10)
@@ -265,7 +217,7 @@ if __name__ == "__main__":
     # print 'show joined data'
     # reviewsData.df = reviewsData.df.withColumnRenamed("reviewerID", "reviewerid")
     joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
-    joined_df.show(10)
+    # joined_df.show(10)
    # joined_df.select("reviewerid", "categories").show(20, False)
     # joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
