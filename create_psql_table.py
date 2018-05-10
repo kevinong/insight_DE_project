@@ -4,17 +4,10 @@ import sys
 import os
 
 def create_tables():
-    commands = ( 
-        """
-        CREATE TABLE IF NOT EXISTS products (
-            productid text,
-            categories text[]
-        );
-        """
-        )
-    postgres_url = 'postgresql://kevin:pw@locoalhost:5432/insight'
+    command = "CREATE TABLE IF NOT EXISTS products (productid text PRIMARY KEY,categories text[]);"
+    postgres_url = 'postgresql://kevin:pw@ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
 
-    conn = None:
+    conn = None
 
     try:
         # connect to the PostgreSQL server
@@ -22,9 +15,10 @@ def create_tables():
         cur = conn.cursor()
         # create table one by one
         print("got connection")
-        for command in commands:
-            cur.execute(command)
-            print("executed command")
+       # for command in commands:
+        print command
+        cur.execute(command)
+        print("executed command")
         # close communication with the PostgreSQL database server
         cur.close()
         print("closed the cursor")
