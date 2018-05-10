@@ -27,7 +27,9 @@ app.layout = html.Div(children=[
         Amazon User Review Data
     '''),
     html.Label("Products"),
-    product_dropdown
+    product_dropdown,
+
+    dcc.Graph(id='user_graph')
 
     # dcc.Graph(
     #     id='example-graph',
@@ -100,6 +102,37 @@ app.layout = html.Div(children=[
     #     }
     # )
 ])
+
+@app.callback(
+    dash.dependencies.Output('user_graph', 'figure'),
+    [dash.dependencies.Input('product_dropdown', 'value')])
+def update_graph(productid):
+    user_names = q.getRelevantUsers(productid)
+    user_data = q.getUsersData(user_names)
+
+    pos = []
+    helpful = []
+    user_id = []
+    for u in user_data:
+        user_id.append(u[0])
+        pos.append(u[6]/u[7])
+        helpful.append(u[3]/u[2])
+
+    return {
+        'data': [
+            go.Scatter(
+                x = pos,
+                y = helpful,
+                text = user_id,
+                mode = 'markers'
+            )
+        ],
+        'layout': go.Layout(
+            xaxis = {'title': 'Positivity'},
+            yaxis = {'title': 'Helpful'}),
+    }
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True, host="0.0.0.0")
