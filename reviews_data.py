@@ -52,6 +52,13 @@ class ProductData:
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
                         .withColumnRenamed("asin", "productid")
 
+        postgres_url = 'jdbc:postgresql://ec2-54-245-66-232.us-west-2.compute.amazonaws.com/insight'
+        postgres_properties = {'user': 'kevin', 'password':'pw'}
+
+        self.df.show(10, False)
+
+        self.df.write.jdbc(url=postgres_url, table='products', mode='overwrite', properties=postgres_properties)
+        print 'saved'
         # self.df.select("categories").show(20, False)
 
         #self.df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "productdata", keyspace = "amazonreviews").save()
@@ -230,15 +237,15 @@ if __name__ == "__main__":
     # print 'show product data'
     # prod_df.show(10, False)
 
-    reviewsData = ReviewsData(reviews_path, conf, sc)
+    # reviewsData = ReviewsData(reviews_path, conf, sc)
     # reviewsData.main()
 
     # print 'show review data'
     # reviewsData.df.select("reviewerID", "asin").show(10)
 
     # print 'show joined data'
-    reviewsData.df = reviewsData.df.withColumnRenamed("reviewerID", "reviewerid")
-    joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
+    # reviewsData.df = reviewsData.df.withColumnRenamed("reviewerID", "reviewerid")
+    # joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
     # joined_df.show(10)
    # joined_df.select("reviewerid", "categories").show(20, False)
     # joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
