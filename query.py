@@ -36,7 +36,7 @@ def getUsersData(users_list):
 
 if __name__ == "__main__":
     command = "SELECT * FROM products LIMIT 1"
-    rows = select(command)
+    rows = fetchData(command)
     print rows
     prod_name = rows[0][0]
     cats = rows[0][1]
