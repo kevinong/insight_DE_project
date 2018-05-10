@@ -16,7 +16,7 @@ app = dash.Dash(__name__, server = server)
 all_products = q.getAllProducts()
 product_dropdown = dcc.Dropdown(
     id = "product_dropdown",
-    options = [{"label": p, "value": p} for p in all_products],
+    options = [{"label": p[0], "value": p[0]} for p in all_products],
     placeholder = "Select a product"
 )
 
@@ -26,7 +26,7 @@ app.layout = html.Div(children=[
     html.Div(children='''
         Amazon User Review Data
     '''),
-
+    html.Label("Products"),
     product_dropdown
 
     # dcc.Graph(
