@@ -23,14 +23,17 @@ def getAllProducts():
     return fetchData(command)
 
 def getRelevantUsers(productid):
-    command = "SELECT categories FROM products WHERE productid = {}".format(productid)
-    cats = fetchData(command)
-
-    command = "SELECT reviewerid, {}, {} FROM joined ORDER BY {} DESC, {} DESC LIMIT 10".format(cats[0], cats[1], cats[0],cats[1])
+    command = "SELECT categories FROM products WHERE productid = \'{}\'".format(productid)
+    cats = fetchData(command)[0][0]
+    print 'in rel user ', cats
+    command = "SELECT reviewerid FROM joined ORDER BY {} DESC, {} DESC LIMIT 10".format(cats[0],cats[1])
     return fetchData(command)
 
 def getUsersData(users_list):
-    users_list_str = ','.join(users_list)
+    print users_list
+    print type(users_list)
+    
+    users_list_str = ','.join([ '\'' + t[0] + '\'' for t in users_list])
     command = "SELECT * FROM users WHERE reviewerid in ({}) ORDER BY count".format(users_list_str)
     return fetchData(command)
 
