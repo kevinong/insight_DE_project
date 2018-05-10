@@ -5,6 +5,10 @@ from pyspark.sql import SQLContext, functions
 from pyspark.sql.types import FloatType, ArrayType, StringType, IntegerType
 from cassandra.cluster import Cluster
 
+import configparser
+import psycopg2
+import sys
+
 import os
 from textblob import TextBlob
 import datetime
@@ -57,7 +61,7 @@ class ProductData:
 
         self.df.show(10, False)
 
-        self.df.write.jdbc(url=postgres_url, table='products', mode='overwrite', properties=postgres_properties)
+        # self.df.write.jdbc(url=postgres_url, table='products', mode='overwrite', properties=postgres_properties)
         print 'saved'
         # self.df.select("categories").show(20, False)
 
@@ -176,30 +180,46 @@ def joinDF(rev_df, prod_df):
     joined_df = joined_df.drop("categories")
     joined_df.printSchema()
     joined_df.show(10)
-    joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
+    # joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
+    self.joined_df.write.jdbc(url=postgres_url, table='joined', mode='overwrite', properties=postgres_properties)
 
 
     return joined_df
 
 def createTable(distincts):
-    CASSANDRA_SERVER    = ['54.245.66.232', '34.214.245.150', '54.218.181.48', '54.71.237.54', '54.190.226.253', '35.165.118.115', '52.11.177.167', '34.215.123.166']
-    CASSANDRA_NAMESPACE = "amazonreviews"
-
-    cluster = Cluster(CASSANDRA_SERVER)
-    session = cluster.connect()
-
-    session.execute('USE ' + CASSANDRA_NAMESPACE)
-    session.execute('DROP TABLE IF EXISTS joineddata;')
-    # distincts = [i.category.replace(' ', '_') for i in joined_df.select('category').distinct().collect()]
-    # print distincts
-    fields = " bigint, ".join(distincts) + ' bigint'
+    fields = " int, ".join(distincts) + ' int'
     print 'CREATING TABLE\n'
     print fields
 
-    cql_command = 'CREATE TABLE joineddata (reviewerid text, {}, PRIMARY KEY (reviewerid));'.format(fields)
-    print 'CQL COMMAND \n'
-    print cql_command
-    session.execute(cql_command)
+    command = "CREATE TABLE IF NOT EXISTS joined (reviewerid text PRIMARY KEY, {});".format(fields)
+
+    postgres_url = 'postgresql://kevin:pw@ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
+
+    conn = None
+
+    try:
+        # connect to the PostgreSQL server
+        conn = psycopg2.connect(postgres_url)
+        cur = conn.cursor()
+        # create table one by one
+        print("got connection")
+       # for command in commands:
+        print command
+        cur.execute(command)
+        print("executed command")
+        # close communication with the PostgreSQL database server
+        cur.close()
+        print("closed the cursor")
+        # commit the changes
+        conn.commit()
+        print("committed the connection")
+    except (Exception) as error:
+        print(error)
+        raise error
+    finally:
+        if conn is not None:
+            conn.close()
+            print("closed the connection")
 
 
 if __name__ == "__main__":
@@ -228,8 +248,8 @@ if __name__ == "__main__":
     reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
     products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
 
-    # productsData = ProductData(products_path, conf, sc)
-    # productsData.main()
+    productsData = ProductData(products_path, conf, sc)
+    productsData.main()
 #    productsData.df
 
     # prod_df = productsData.df.select("asin", "categories")
@@ -237,15 +257,15 @@ if __name__ == "__main__":
     # prod_df.show(10, False)
 
     reviewsData = ReviewsData(reviews_path, conf, sc)
-    reviewsData.transform()
+    # reviewsData.transform()
 
     # print 'show review data'
     # reviewsData.df.select("reviewerID", "asin").show(10)
 
     # print 'show joined data'
     # reviewsData.df = reviewsData.df.withColumnRenamed("reviewerID", "reviewerid")
-    # joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
-    # joined_df.show(10)
+    joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
+    joined_df.show(10)
    # joined_df.select("reviewerid", "categories").show(20, False)
     # joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
