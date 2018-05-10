@@ -4,7 +4,10 @@ import sys
 import os
 
 def create_tables():
-    command = "CREATE TABLE IF NOT EXISTS products (productid text PRIMARY KEY,categories text[]);"
+    # command = "CREATE TABLE IF NOT EXISTS products (productid text PRIMARY KEY,categories text[]);"
+    # session.execute('CREATE TABLE userdata (reviewerid text, avg_star float, count int, helpful int, unhelpful int, avg_pol float, pos float, pos_review_count int, neg float, neg_review_count int, subjectivity float, PRIMARY KEY (reviewerid));')
+    command = "CREATE TABLE IF NOT EXISTS users (reviewerid text PRIMARY KEY, avg_star float, count int, helpful int, unhelpful int, avg_pol float, pos float, pos_review_count int, neg float, neg_review_count int, subjectivity float);"
+
     postgres_url = 'postgresql://kevin:pw@ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
 
     conn = None

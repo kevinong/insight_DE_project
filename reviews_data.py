@@ -14,6 +14,9 @@ from util import get_s3_path
 
 
 BUCKET = "amazon-data-insight"
+postgres_url = 'jdbc:postgresql://ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
+postgres_properties = {'user': 'kevin', 'password':'pw'}
+
 
 def sentiment(reviewText):
     sentiment = TextBlob(reviewText).sentiment
@@ -52,9 +55,6 @@ class ProductData:
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
                         .withColumnRenamed("asin", "productid")
 
-        postgres_url = 'jdbc:postgresql://ec2-54-245-66-232.us-west-2.compute.amazonaws.com/insight'
-        postgres_properties = {'user': 'kevin', 'password':'pw'}
-
         self.df.show(10, False)
 
         self.df.write.jdbc(url=postgres_url, table='products', mode='overwrite', properties=postgres_properties)
@@ -77,8 +77,6 @@ class ReviewsData:
             load(path)
 
     def transform(self):
-
-        # self.df.show(5)
 
         print "start time: ", datetime.datetime.now()
 
@@ -123,6 +121,7 @@ class ReviewsData:
                                                                functions.avg("subjectivity").alias("subjectivity"))
                                                                # functions.collect_set("asin").alias("products"),\
                                                                # functions.collect_set("categories").alias("categories"))
+        self.user_df.write.jdbc(url=postgres_url, table='users', mode='overwrite', properties=postgres_properties)
 # session.execute('CREATE TABLE data (reviewerid text,
 # avg_star float, helpful int, unhelpful int, avg_pol float, pos float, pos_review_count int, neg float, neg_review_count int, subjectivity float, PRIMARY KEY (reviewerid));')
 
@@ -132,7 +131,7 @@ class ReviewsData:
 #        grouped_df.rdd.saveAsTextFile("df.txt")
  #       grouped_df.show(20)
 
-        self.grouped_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "userdata", keyspace = "amazonreviews").save()
+        # self.grouped_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "userdata", keyspace = "amazonreviews").save()
 
         # table1 = sqlContext.read.format("org.apache.spark.sql.cassandra").options(table="kv", keyspace="ks").load()
         # table1.write.format("org.apache.spark.sql.cassandra").options(table="othertable", keyspace = "ks").save(mode ="append")
@@ -229,16 +228,16 @@ if __name__ == "__main__":
     reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
     products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
 
-    productsData = ProductData(products_path, conf, sc)
-    productsData.main()
+    # productsData = ProductData(products_path, conf, sc)
+    # productsData.main()
 #    productsData.df
 
     # prod_df = productsData.df.select("asin", "categories")
     # print 'show product data'
     # prod_df.show(10, False)
 
-    # reviewsData = ReviewsData(reviews_path, conf, sc)
-    # reviewsData.main()
+    reviewsData = ReviewsData(reviews_path, conf, sc)
+    reviewsData.transform()
 
     # print 'show review data'
     # reviewsData.df.select("reviewerID", "asin").show(10)
