@@ -26,8 +26,8 @@ def flat(input_list):
     for sublist in input_list:
         try:
             if sublist is not None:
-                result.append(sublist[0].replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
-                result.append(sublist[1].replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
+                result.append(sublist[0].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
+                result.append(sublist[1].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
                 # for val in sublist:
                 #     if val is not None and val not in result:
                 #         result.append(val)
@@ -168,6 +168,7 @@ def joinDF(rev_df, prod_df):
 
     createTable(distincts)
     joined_df = joined_df.drop("categories")
+    joined_df.printSchema()
     joined_df.show(10)
     joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
 
@@ -185,7 +186,7 @@ def createTable(distincts):
     session.execute('DROP TABLE IF EXISTS joineddata;')
     # distincts = [i.category.replace(' ', '_') for i in joined_df.select('category').distinct().collect()]
     # print distincts
-    fields = " int ,".join(distincts) + ' int'
+    fields = " bigint, ".join(distincts) + ' bigint'
     print 'CREATING TABLE\n'
     print fields
 
@@ -239,7 +240,7 @@ if __name__ == "__main__":
     reviewsData.df = reviewsData.df.withColumnRenamed("reviewerID", "reviewerid")
     joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
     # joined_df.show(10)
-    joined_df.select("reviewerid", "categories").show(20, False)
+   # joined_df.select("reviewerid", "categories").show(20, False)
     # joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
 
 
