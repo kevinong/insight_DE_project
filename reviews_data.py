@@ -159,8 +159,9 @@ def joinDF(rev_df, prod_df):
 
    # chars = re.escape(string.punctuation)
    # print re.sub(r'['+chars+']', '',my_str)
-    distincts = [i.category.replace(',','').replace('&', '').replace(' ', '_') for i in joined_df.select('category').distinct().collect()]
-    # print distincts
+    distincts = [i.category for i in joined_df.select('category').distinct().collect()]
+    print "DISTINCT CATEGORIES \n"
+    print distincts
 
     joined_df = joined_df.groupby("reviewerid").pivot("category").count()
     joined_df = joined_df.na.fill(0)
@@ -184,8 +185,13 @@ def createTable(distincts):
     # distincts = [i.category.replace(' ', '_') for i in joined_df.select('category').distinct().collect()]
     # print distincts
     fields = " int ,".join(distincts) + ' int'
+    print 'CREATING TABLE\n'
     print fields
-    session.execute('CREATE TABLE joineddata (productid text, {}, PRIMARY KEY (productid));'.format(fields))
+
+    cql_command = 'CREATE TABLE joineddata (reviewerid text, {}, PRIMARY KEY (productid));'.format(fields)
+    print 'CQL COMMAND \n'
+    print cql_command
+    session.execute(cql_command)
 
 
 if __name__ == "__main__":
