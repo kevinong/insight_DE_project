@@ -38,3 +38,6 @@ def create_tables():
         if conn is not None:
             conn.close()
             print("closed the connection")
+            
+if __name__ == '__main__':
+    create_tables()
