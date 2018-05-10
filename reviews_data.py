@@ -133,7 +133,7 @@ def joinDF(rev_df, prod_df):
     # joined_df.printSchema()
     joined_df.show(10)
     # joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
-    self.joined_df.write.jdbc(url=postgres_url, table='joined', mode='overwrite', properties=postgres_properties)
+    joined_df.write.jdbc(url=postgres_url, table='joined', mode='overwrite', properties=postgres_properties)
 
 
     return joined_df
