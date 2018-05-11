@@ -34,7 +34,7 @@ def flat(input_list):
         try:
             if sublist is not None:
                 result.append(sublist[0].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
-                # result.append(sublist[1].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
+                result.append(sublist[1].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
         except:
             pass
 
@@ -63,7 +63,7 @@ class ProductData:
             load(path)
 
     def main(self):
-        self.df = self.df.select("asin", "categories").na.drop(subset=["asin"])
+        self.df = self.df.select("asin", "title", "categories").na.drop(subset=["asin"])
 
         print 'prod before flat \n'
         self.df.show(10, False)
@@ -71,6 +71,7 @@ class ProductData:
         flat_udf = functions.udf(flat, ArrayType(StringType()))
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
                         .withColumnRenamed("asin", "productid")
+                        .withColumnRenamed("title", "productname")
 
         print 'prod after flat prod\n'
         self.df.show(10, False)
