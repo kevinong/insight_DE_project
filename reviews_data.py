@@ -33,8 +33,8 @@ def flat(input_list):
     for sublist in input_list:
         try:
             if sublist is not None:
-                for cat in sublist
-                    result.append(cat.strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
+                for cat in sublist:
+                    result.append(cat.strip().replace('-','').replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
                     # result.append(sublist[1].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
         except:
             pass
