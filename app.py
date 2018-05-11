@@ -29,100 +29,57 @@ app.layout = html.Div(children=[
     html.Label("Products"),
     product_dropdown,
 
-    dcc.Graph(id='user_graph')
+    dcc.Graph(id='star_help_graph'),
+    dcc.Graph(id='pos_sub_graph')
 
-    # dcc.Graph(
-    #     id='example-graph',
-    #     figure={
-    #         'data': [
-    #             {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
-    #             # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-    #         ],
-    #         'layout': {
-    #             'title': 'Dash Data Visualization'
-    #         }
-    #     }
-    # )
-
-    # dcc.Graph(
-    #     id='scatter-graph',
-    #     figure={
-    #         'data': [
-    #             go.Scatter(
-    #                 x = pos,
-    #                 y = net_helpfulness,
-    #                 text = user_id,
-    #                 mode = 'markers'
-    #             )
-    #             # {'x': list(range(5)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
-    #             # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-    #         ],
-    #         'layout': go.Layout(
-    #             xaxis = {'title': 'Positivity'},
-    #             yaxis = {'title': 'Helpful Votes'})
-    #     }
-    # ),
-
-    # dcc.Graph(
-    #     id='star-graph',
-    #     figure={
-    #         'data': [
-    #             {'x': list(range(10)), 'y': stars, 'type': 'bar', 'name': 'Stars'},
-    #             # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-    #         ],
-    #         'layout': {
-    #             'title': 'Users Average Star Ratings'
-    #         }
-    #     }
-    # ),
-
-    # dcc.Graph(
-    #     id='helpfulness-graph',
-    #     figure={
-    #         'data': [
-    #             {'x': list(range(10)), 'y': helpfulness, 'type': 'bar', 'name': 'Helpfulness'},
-    #             # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-    #         ],
-    #         'layout': {
-    #             'title': 'Users Helpful Votes'
-    #         }
-    #     }
-    # ),
-
-    # dcc.Graph(
-    #     id='unhelpfulness-graph',
-    #     figure={
-    #         'data': [
-    #             {'x': list(range(5)), 'y': unhelpfulness, 'type': 'bar', 'name': 'Unhelpfulness'},
-    #             # {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-    #         ],
-    #         'layout': {
-    #             'title': 'Users Unhelpful Votes'
-    #         }
-    #     }
-    # )
 ])
 
 @app.callback(
-    dash.dependencies.Output('user_graph', 'figure'),
+    dash.dependencies.Output('star_help_graph', 'figure'),
     [dash.dependencies.Input('product_dropdown', 'value')])
-def update_graph(productid):
+def getStarHelpGraph(productid):
     user_names = q.getRelevantUsers(productid)
     user_data = q.getUsersData(user_names)
+    star = []
+    helpful = []
+    user_id = []
+    for u in user_data:
+        user_id.append(u[0])
+        star.append(u[1])
+        helpful.append(u[3]/u[2])
 
+    return {
+        'data': [
+            go.Scatter(
+                x = star,
+                y = helpful,
+                text = user_id,
+                mode = 'markers'
+            )
+        ],
+        'layout': go.Layout(
+            xaxis = {'title': 'Average Star Rating'},
+            yaxis = {'title': 'Average Helpful Votes'}),
+    }
+
+@app.callback(
+    dash.dependencies.Output('pos_sub_graph', 'figure'),
+    [dash.dependencies.Input('product_dropdown', 'value')])
+def getPosSubGraph(productid):
+    user_names = q.getRelevantUsers(productid)
+    user_data = q.getUsersData(user_names)
     pos = []
     helpful = []
     user_id = []
     for u in user_data:
         user_id.append(u[0])
         pos.append(u[6]/u[7])
-        helpful.append(u[3]/u[2])
-
+        sub.append(u[-1])
     return {
         'data': [
             go.Scatter(
                 x = pos,
-                y = helpful,
+                y = sub,
                 text = user_id,
                 mode = 'markers'
             )
@@ -131,7 +88,6 @@ def update_graph(productid):
             xaxis = {'title': 'Positivity'},
             yaxis = {'title': 'Helpful'}),
     }
-
 
 
 if __name__ == '__main__':
