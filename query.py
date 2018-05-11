@@ -26,7 +26,8 @@ def getAllProducts():
 def getRelevantUsers(productid):
     command = "SELECT categories FROM products WHERE productid = \'{}\'".format(productid)
     cats = fetchData(command)[0][0]
-    command = "SELECT reviewerid FROM joined ORDER BY {} DESC LIMIT 100".format(cats[0])
+    order = ' DESC '.join(cats) + ' DESC '
+    command = "SELECT reviewerid FROM joined ORDER BY {} LIMIT 100".format(order)
     return fetchData(command)
 
 def getUsersData(users_list):
@@ -42,6 +43,8 @@ if __name__ == "__main__":
     prod_name = rows[0][0]
     cats = rows[0][1]
     print prod_name, '\n', cats
+
+    print ' DESC '.join(cats) + ' DESC '
 
     rel_users = getRelevantUsers(prod_name)
     print(rel_users)
