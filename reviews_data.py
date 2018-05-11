@@ -131,8 +131,8 @@ def joinDF(rev_df, prod_df):
 
     joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories").alias("categories"))
 
-    flat_udf = functions.udf(flat, ArrayType(StringType()))
-    joined_df = joined_df.withColumn("categories", flat_udf(joined_df.categories))
+    flat2_udf = functions.udf(flat2, ArrayType(StringType()))
+    joined_df = joined_df.withColumn("categories", flat2_udf(joined_df.categories))
     joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
     print "distinct cats: \n", joined_df.select("category").distinct().count()
     
