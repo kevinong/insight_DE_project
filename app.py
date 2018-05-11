@@ -16,7 +16,7 @@ app = dash.Dash(__name__, server = server)
 all_products = q.getAllProducts()
 product_dropdown = dcc.Dropdown(
     id = "product_dropdown",
-    options = [{"label": p[0], "value": p[0]} for p in all_products],
+    options = [{"label": p[1], "value": p[0]} for p in all_products],
     placeholder = "Select a product"
 )
 
@@ -30,7 +30,7 @@ app.layout = html.Div(children=[
     product_dropdown,
 
     dcc.Graph(id='star_help_graph'),
-    dcc.Graph(id='pos_sub_graph')
+ #   dcc.Graph(id='pos_sub_graph')
 
 ])
 
@@ -62,32 +62,32 @@ def getStarHelpGraph(productid):
             yaxis = {'title': 'Average Helpful Votes'}),
     }
 
-@app.callback(
-    dash.dependencies.Output('pos_sub_graph', 'figure'),
-    [dash.dependencies.Input('product_dropdown', 'value')])
-def getPosSubGraph(productid):
-    user_names = q.getRelevantUsers(productid)
-    user_data = q.getUsersData(user_names)
-    pos = []
-    sub = []
-    user_id = []
-    for u in user_data:
-        user_id.append(u[0])
-        pos.append(u[6]/u[7])
-        sub.append(u[-1])
-    return {
-        'data': [
-            go.Scatter(
-                x = pos,
-                y = sub,
-                text = user_id,
-                mode = 'markers'
-            )
-        ],
-        'layout': go.Layout(
-            xaxis = {'title': 'Positivity'},
-            yaxis = {'title': 'Subjectivity'}),
-    }
+#@app.callback(
+#    dash.dependencies.Output('pos_sub_graph', 'figure'),
+#    [dash.dependencies.Input('product_dropdown', 'value')])
+#def getPosSubGraph(productid):
+#    user_names = q.getRelevantUsers(productid)
+#    user_data = q.getUsersData(user_names)
+#    pos = []
+#    sub = []
+#    user_id = []
+#    for u in user_data:
+#        user_id.append(u[0])
+#        pos.append(u[6]/u[7])
+#        sub.append(u[-1])
+#    return {
+#        'data': [
+#            go.Scatter(
+#                x = pos,
+#                y = sub,
+#                text = user_id,
+#                mode = 'markers'
+#            )
+#        ],
+#        'layout': go.Layout(
+#            xaxis = {'title': 'Positivity'},
+#            yaxis = {'title': 'Subjectivity'}),
+#    }
 
 
 if __name__ == '__main__':

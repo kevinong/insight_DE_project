@@ -70,7 +70,7 @@ class ProductData:
 
         flat_udf = functions.udf(flat, ArrayType(StringType()))
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
-                        .withColumnRenamed("asin", "productid")
+                        .withColumnRenamed("asin", "productid")\
                         .withColumnRenamed("title", "productname")
 
         print 'prod after flat prod\n'

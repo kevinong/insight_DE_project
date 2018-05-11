@@ -20,7 +20,7 @@ def fetchData(command):
     return rows
 
 def getAllProducts():
-    command = "SELECT productid from products"
+    command = "SELECT productid, productname from products LIMIT 100"
     return fetchData(command)
 
 def getRelevantUsers(productid):

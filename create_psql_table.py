@@ -20,8 +20,9 @@ def create_tables():
         # create table one by one
         print("got connection")
        # for command in commands:
-        print command
-        cur.execute(command)
+       # print command
+        cur.execute(command1)
+        cur.execute(command2)
         print("executed command")
         # close communication with the PostgreSQL database server
         cur.close()

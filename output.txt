@@ -1,34 +1,135 @@
-prod count:  9430088
+prod before flat 
 
-prod dtypes:  [('_corrupt_record', 'string'), ('asin', 'string'), ('brand', 'string'), ('categories', 'array<array<string>>'), ('description', 'string'), ('imUrl', 'string'), ('price', 'double'), ('related', 'struct<also_bought:array<string>,also_viewed:array<string>,bought_together:array<string>,buy_after_viewing:array<string>>'), ('salesRank', 'struct<Appliances:bigint,Arts, Crafts & Sewing:bigint,Automotive:bigint,Baby:bigint,Beauty:bigint,Books:bigint,Camera &amp; Photo:bigint,Cell Phones & Accessories:bigint,Clothing:bigint,Computers & Accessories:bigint,Electronics:bigint,Gift Cards Store:bigint,Grocery & Gourmet Food:bigint,Health & Personal Care:bigint,Home &amp; Kitchen:bigint,Home Improvement:bigint,Industrial & Scientific:bigint,Jewelry:bigint,Kitchen & Dining:bigint,Magazines:bigint,Movies & TV:bigint,Music:bigint,Musical Instruments:bigint,Office Products:bigint,Patio, Lawn & Garden:bigint,Pet Supplies:bigint,Prime Pantry:bigint,Shoes:bigint,Software:bigint,Sports &amp; Outdoors:bigint,Toys & Games:bigint,Video Games:bigint,Watches:bigint>'), ('title', 'string')]
++----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|asin      |title                                                                                                                                                                                                                                          |categories                                                                                                                                                                     |
++----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|0006428320|Six Sonatas For Two Flutes Or Violins, Volume 2 (#4-6)                                                                                                                                                                                         |[WrappedArray(Musical Instruments, Instrument Accessories, General Accessories, Sheet Music Folders)]                                                                          |
+|0014072149|Double Concerto in D Minor By Johann Sebastian Bach. Edited By David Oistrach. For Violin I, Violin Ii and Piano Accompaniment. Urtext. Baroque. Medium. Set of Performance Parts. Solo Parts, Piano Reduction and Introductory Text. BWV 1043.|[WrappedArray(Musical Instruments)]                                                                                                                                            |
+|0041291905|Hal Leonard Vivaldi Four Seasons for Piano (Original Italian Text)                                                                                                                                                                             |[WrappedArray(Musical Instruments, Instrument Accessories, General Accessories, Sheet Music Folders)]                                                                          |
+|0041913574|Aida: Opera in Quattro Atti, Partitura -- Aida: Opera in Four Acts, Full Score (Nuova Edizione Riveduta e Corretta/New Corrected &amp; Revised Edition)                                                                                        |[WrappedArray(Musical Instruments)]                                                                                                                                            |
+|0201891859|Nocturnes                                                                                                                                                                                                                                      |[WrappedArray(Musical Instruments, Instrument Accessories, General Accessories, Sheet Music Folders)]                                                                          |
+|0577088726|Sisyphus Redux for solo alto flute                                                                                                                                                                                                             |[WrappedArray(Musical Instruments, Instrument Accessories, Wind & Woodwind Accessories)]                                                                                       |
+|0634029363|Hal Leonard Eric Clapton - Acoustic Classics (DVD)                                                                                                                                                                                             |[WrappedArray(CDs & Vinyl, Special Interest, Instructional), WrappedArray(Movies & TV, Movies), WrappedArray(Musical Instruments, Instrument Accessories, General Accessories)]|
+|0634029355|Hal Leonard Eric Clapton - The Early Years (DVD)                                                                                                                                                                                               |[WrappedArray(CDs & Vinyl, Special Interest, Instructional), WrappedArray(Movies & TV, Movies), WrappedArray(Musical Instruments, Instrument Accessories, General Accessories)]|
+|0634029347|Hal Leonard Eric Clapton - The Solo Years DVD                                                                                                                                                                                                  |[WrappedArray(CDs & Vinyl, Special Interest, Instructional), WrappedArray(Movies & TV, Movies), WrappedArray(Musical Instruments, Instrument Accessories, General Accessories)]|
+|0634029231|Best of Stevie Ray Vaughan Signature Licks Guitar DVD                                                                                                                                                                                          |[WrappedArray(Movies & TV, Movies), WrappedArray(Musical Instruments, Instrument Accessories, General Accessories)]                                                            |
++----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+only showing top 10 rows
 
-first 5 rows (prod):  +---------------+----------+----------+--------------------+--------------------+--------------------+-----+--------------------+--------------------+--------------------+
-|_corrupt_record|      asin|     brand|          categories|         description|               imUrl|price|             related|           salesRank|               title|
-+---------------+----------+----------+--------------------+--------------------+--------------------+-----+--------------------+--------------------+--------------------+
-|           null|0001048791|      null|[WrappedArray(Boo...|                null|http://ecx.images...| null|                null|[null,null,null,n...|The Crucible: Per...|
-|           null|0000143561|      null|[WrappedArray(Mov...|3Pack DVD set - I...|http://g-ecx.imag...|12.99|[null,WrappedArra...|[null,null,null,n...|Everyday Italian ...|
-|           null|0000037214|Big Dreams|[WrappedArray(Clo...|                null|http://ecx.images...| 6.99|[null,WrappedArra...|[null,null,null,n...|Purple Sequin Tin...|
-|           null|0000032069|  BubuBibi|[WrappedArray(Spo...|                null|http://ecx.images...| 7.89|[WrappedArray(000...|                null|Adult Ballet Tutu...|
-|           null|0000031909|   Unknown|[WrappedArray(Spo...|High quality 3 la...|http://ecx.images...|  7.0|[WrappedArray(B00...|[null,null,null,n...|Girls Ballet Tutu...|
-+---------------+----------+----------+--------------------+--------------------+--------------------+-----+--------------------+--------------------+--------------------+
-only showing top 5 rows
+prod after flat prod
 
-None
++----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------+
+|productid |productname                                                                                                                                                                                                                                    |categories                                                                                     |
++----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------+
+|0006428320|Six Sonatas For Two Flutes Or Violins, Volume 2 (#4-6)                                                                                                                                                                                         |[musical_instruments, instrument_accessories]                                                  |
+|0014072149|Double Concerto in D Minor By Johann Sebastian Bach. Edited By David Oistrach. For Violin I, Violin Ii and Piano Accompaniment. Urtext. Baroque. Medium. Set of Performance Parts. Solo Parts, Piano Reduction and Introductory Text. BWV 1043.|[musical_instruments]                                                                          |
+|0041291905|Hal Leonard Vivaldi Four Seasons for Piano (Original Italian Text)                                                                                                                                                                             |[musical_instruments, instrument_accessories]                                                  |
+|0041913574|Aida: Opera in Quattro Atti, Partitura -- Aida: Opera in Four Acts, Full Score (Nuova Edizione Riveduta e Corretta/New Corrected &amp; Revised Edition)                                                                                        |[musical_instruments]                                                                          |
+|0201891859|Nocturnes                                                                                                                                                                                                                                      |[musical_instruments, instrument_accessories]                                                  |
+|0577088726|Sisyphus Redux for solo alto flute                                                                                                                                                                                                             |[musical_instruments, instrument_accessories]                                                  |
+|0634029363|Hal Leonard Eric Clapton - Acoustic Classics (DVD)                                                                                                                                                                                             |[cds__vinyl, special_interest, movies__tv, movies, musical_instruments, instrument_accessories]|
+|0634029355|Hal Leonard Eric Clapton - The Early Years (DVD)                                                                                                                                                                                               |[cds__vinyl, special_interest, movies__tv, movies, musical_instruments, instrument_accessories]|
+|0634029347|Hal Leonard Eric Clapton - The Solo Years DVD                                                                                                                                                                                                  |[cds__vinyl, special_interest, movies__tv, movies, musical_instruments, instrument_accessories]|
+|0634029231|Best of Stevie Ray Vaughan Signature Licks Guitar DVD                                                                                                                                                                                          |[movies__tv, movies, musical_instruments, instrument_accessories]                              |
++----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------+
+only showing top 10 rows
 
-qa count:  9011
+prod saved
+prod before join
++----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------+
+|productid |productname                                                                                                                                                                                                                                    |categories                                                                                     |
++----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------+
+|0006428320|Six Sonatas For Two Flutes Or Violins, Volume 2 (#4-6)                                                                                                                                                                                         |[musical_instruments, instrument_accessories]                                                  |
+|0014072149|Double Concerto in D Minor By Johann Sebastian Bach. Edited By David Oistrach. For Violin I, Violin Ii and Piano Accompaniment. Urtext. Baroque. Medium. Set of Performance Parts. Solo Parts, Piano Reduction and Introductory Text. BWV 1043.|[musical_instruments]                                                                          |
+|0041291905|Hal Leonard Vivaldi Four Seasons for Piano (Original Italian Text)                                                                                                                                                                             |[musical_instruments, instrument_accessories]                                                  |
+|0041913574|Aida: Opera in Quattro Atti, Partitura -- Aida: Opera in Four Acts, Full Score (Nuova Edizione Riveduta e Corretta/New Corrected &amp; Revised Edition)                                                                                        |[musical_instruments]                                                                          |
+|0201891859|Nocturnes                                                                                                                                                                                                                                      |[musical_instruments, instrument_accessories]                                                  |
+|0577088726|Sisyphus Redux for solo alto flute                                                                                                                                                                                                             |[musical_instruments, instrument_accessories]                                                  |
+|0634029363|Hal Leonard Eric Clapton - Acoustic Classics (DVD)                                                                                                                                                                                             |[cds__vinyl, special_interest, movies__tv, movies, musical_instruments, instrument_accessories]|
+|0634029355|Hal Leonard Eric Clapton - The Early Years (DVD)                                                                                                                                                                                               |[cds__vinyl, special_interest, movies__tv, movies, musical_instruments, instrument_accessories]|
+|0634029347|Hal Leonard Eric Clapton - The Solo Years DVD                                                                                                                                                                                                  |[cds__vinyl, special_interest, movies__tv, movies, musical_instruments, instrument_accessories]|
+|0634029231|Best of Stevie Ray Vaughan Signature Licks Guitar DVD                                                                                                                                                                                          |[movies__tv, movies, musical_instruments, instrument_accessories]                              |
++----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------+
+only showing top 10 rows
 
-qa dtypes:  [('answer', 'string'), ('answerTime', 'string'), ('answerType', 'string'), ('asin', 'string'), ('question', 'string'), ('questionType', 'string'), ('unixTime', 'bigint')]
+first join
++--------------+--------------------+
+|    reviewerid|          categories|
++--------------+--------------------+
+|A2DG65AWX5RJ4J|[WrappedArray(mus...|
+|A36C867ZDP30NQ|[WrappedArray(mus...|
+| A5MC7LP0ZBO4Q|[WrappedArray(mus...|
+|A2IZ3ST24HSO4H|[WrappedArray(mus...|
+|A17A1KTVI3DG6U|[WrappedArray(mus...|
+|A3AOPVQ7EZHTWA|[WrappedArray(mus...|
+| AB7WPLA1CN5I1|[WrappedArray(mus...|
+|A2CARFAX5FNQT9|[WrappedArray(mus...|
+| AX11NOUMV8G95|[WrappedArray(mus...|
+|A3LOJ2QHXITCF7|[WrappedArray(mus...|
++--------------+--------------------+
+only showing top 10 rows
 
-first 5 rows (qa):  +--------------------+------------+----------+----------+--------------------+------------+----------+
-|              answer|  answerTime|answerType|      asin|            question|questionType|  unixTime|
-+--------------------+------------+----------+----------+--------------------+------------+----------+
-|I replaced my old...|Jun 27, 2014|         ?|B00004U9JP|I have a 9 year o...|      yes/no|1403852400|
-|This may help InS...|Apr 28, 2014|      null|B00004U9JP|        model number|  open-ended|1398668400|
-|Plumbing connecti...|Aug 25, 2014|         ?|B00004U9JP|can I replace Bad...|      yes/no|1408950000|
-|It does not come ...| Nov 3, 2014|         ?|B00004U9JP|Does this come wi...|      yes/no|1415001600|
-|Check if you drop...|Jun 21, 2014|      null|B00004U9JP|loud noise inside...|  open-ended|1403334000|
-+--------------------+------------+----------+----------+--------------------+------------+----------+
-only showing top 5 rows
+joined after flat2
++--------------+--------------------+
+|    reviewerid|          categories|
++--------------+--------------------+
+|A17A1KTVI3DG6U|[musical_instrume...|
+|A2DG65AWX5RJ4J|[musical_instrume...|
+|A2IZ3ST24HSO4H|[musical_instrume...|
+|A36C867ZDP30NQ|[musical_instrume...|
+| A5MC7LP0ZBO4Q|[musical_instrume...|
+|A3LOJ2QHXITCF7|[musical_instrume...|
+| AX11NOUMV8G95|[musical_instrume...|
+|A3AOPVQ7EZHTWA|[musical_instrume...|
+| AB7WPLA1CN5I1|[musical_instrume...|
+|A2CARFAX5FNQT9|[musical_instrume...|
++--------------+--------------------+
+only showing top 10 rows
 
-None
+joined after flatmap
++--------------+--------------------+
+|    reviewerid|            category|
++--------------+--------------------+
+|A2DG65AWX5RJ4J| musical_instruments|
+|A2DG65AWX5RJ4J|instrument_access...|
+|A2DG65AWX5RJ4J| musical_instruments|
+|A2DG65AWX5RJ4J|instrument_access...|
+|A2DG65AWX5RJ4J| musical_instruments|
+|A2DG65AWX5RJ4J|instrument_access...|
+|A2DG65AWX5RJ4J| musical_instruments|
+|A2DG65AWX5RJ4J|instrument_access...|
+|A36C867ZDP30NQ| musical_instruments|
+|A36C867ZDP30NQ|instrument_access...|
++--------------+--------------------+
+only showing top 10 rows
+
+distinct cats: 
+14
+DISTINCT CATEGORIES 
+
+[u'band__orchestra', u'wind__woodwind_instruments', u'instrument_accessories', u'microphones__accessories', u'software', u'design__illustration', u'stringed_instruments', u'studio_recording_equipment', u'amplifiers__effects', u'keyboards', u'live_sound__stage', u'dj_electronic_music__karaoke', u'guitars', u'musical_instruments']
+CREATING TABLE
+
+band__orchestra int, wind__woodwind_instruments int, instrument_accessories int, microphones__accessories int, software int, design__illustration int, stringed_instruments int, studio_recording_equipment int, amplifiers__effects int, keyboards int, live_sound__stage int, dj_electronic_music__karaoke int, guitars int, musical_instruments int
+got connection
+CREATE TABLE IF NOT EXISTS joined (reviewerid text PRIMARY KEY, band__orchestra int, wind__woodwind_instruments int, instrument_accessories int, microphones__accessories int, software int, design__illustration int, stringed_instruments int, studio_recording_equipment int, amplifiers__effects int, keyboards int, live_sound__stage int, dj_electronic_music__karaoke int, guitars int, musical_instruments int);
+executed command
+closed the cursor
+committed the connection
+closed the connection
++--------------+-------------------+---------------+--------------------+----------------------------+-------+----------------------+---------+-----------------+------------------------+-------------------+--------+--------------------+--------------------------+--------------------------+
+|    reviewerid|amplifiers__effects|band__orchestra|design__illustration|dj_electronic_music__karaoke|guitars|instrument_accessories|keyboards|live_sound__stage|microphones__accessories|musical_instruments|software|stringed_instruments|studio_recording_equipment|wind__woodwind_instruments|
++--------------+-------------------+---------------+--------------------+----------------------------+-------+----------------------+---------+-----------------+------------------------+-------------------+--------+--------------------+--------------------------+--------------------------+
+|A17A1KTVI3DG6U|                  0|              0|                   0|                           0|      1|                     2|        1|                0|                       0|                  4|       0|                   0|                         0|                         0|
+| A5MC7LP0ZBO4Q|                  0|              0|                   0|                           0|      0|                     7|        0|                0|                       0|                  7|       0|                   0|                         0|                         0|
+|A36C867ZDP30NQ|                  1|              0|                   0|                           0|      0|                     3|        0|                0|                       2|                  6|       0|                   0|                         0|                         0|
+|A2DG65AWX5RJ4J|                  0|              0|                   0|                           0|      0|                     4|        0|                0|                       0|                  4|       0|                   0|                         0|                         0|
+|A2IZ3ST24HSO4H|                  0|              0|                   0|                           0|      0|                     4|        0|                0|                       0|                  4|       0|                   0|                         0|                         0|
+| ACWJDL1ZYX8RE|                  2|              0|                   0|                           0|      0|                     2|        0|                0|                       0|                  5|       0|                   0|                         0|                         1|
+|A3AOPVQ7EZHTWA|                  1|              0|                   0|                           1|      0|                    10|        0|                0|                       0|                 15|       0|                   0|                         3|                         0|
+|A3LOJ2QHXITCF7|                  0|              0|                   0|                           1|      0|                     4|        0|                0|                       0|                  5|       0|                   0|                         0|                         0|
+|A2CARFAX5FNQT9|                  0|              0|                   0|                           0|      0|                     6|        0|                0|                       0|                  8|       0|                   0|                         0|                         2|
+| AX11NOUMV8G95|                  0|              0|                   0|                           0|      0|                     7|        0|                0|                       0|                  7|       0|                   0|                         0|                         0|
++--------------+-------------------+---------------+--------------------+----------------------------+-------+----------------------+---------+-----------------+------------------------+-------------------+--------+--------------------+--------------------------+--------------------------+
+only showing top 10 rows
 
