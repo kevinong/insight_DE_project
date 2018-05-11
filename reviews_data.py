@@ -81,7 +81,7 @@ class ProductData:
         print 'prod after flat prod\n'
  #       self.df.show(10, False)
 
-        self.df.write.jdbc(url=postgres_url, table='products', mode='overwrite', properties=postgres_properties)
+        self.df.write.jdbc(url=postgres_url, table='products2', mode='overwrite', properties=postgres_properties)
         print 'prod saved'
 
 
@@ -131,7 +131,7 @@ class ReviewsData:
                                                                # functions.avg("subjectivity").alias("subjectivity"))
                                                                # functions.collect_set("asin").alias("products"),\
                                                                # functions.collect_set("categories").alias("categories"))
-        self.user_df.write.jdbc(url=postgres_url, table='users', mode='overwrite', properties=postgres_properties)
+        self.user_df.write.jdbc(url=postgres_url, table='users2', mode='overwrite', properties=postgres_properties)
 
 
 def joinDF(rev_df, prod_df):
@@ -170,7 +170,7 @@ def joinDF(rev_df, prod_df):
     # joined_df.printSchema()
     #joined_df.show(10)
     # joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
-    joined_df.write.jdbc(url=postgres_url, table='joined', mode='overwrite', properties=postgres_properties)
+    joined_df.write.jdbc(url=postgres_url, table='joined2', mode='overwrite', properties=postgres_properties)
 
 
     return joined_df
@@ -180,7 +180,7 @@ def createTable(distincts):
     print 'CREATING TABLE\n'
     print fields
 
-    command = "CREATE TABLE IF NOT EXISTS joined (reviewerid text PRIMARY KEY, {});".format(fields)
+    command = "CREATE TABLE IF NOT EXISTS joined2 (reviewerid text PRIMARY KEY, {});".format(fields)
 
     postgres_url = 'postgresql://kevin:pw@ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
 
