@@ -121,7 +121,7 @@ def joinDF2(rev_df, prod_df, cats):
         joinDFFilter(rev_df, prod_df, cat)
 
 # def joinDF(rev_df, prod_df):
-#     print 'prod before join'
+    print 'prod before join'
 #     prod_df.show(10, False)
 
 
@@ -163,12 +163,17 @@ def joinDF2(rev_df, prod_df, cats):
 #     return joined_df
 
 if __name__ == "__main__":
+    conf = SparkConf().setAppName("amazon").set("spark.driver.maxResultSize", "2g").set("spark.driver.memory", "3g").set("spark.sql.pivotMaxValues", 1000000)
+    sc = SparkContext(conf = conf)
+
+    sqlContext = SQLContext(sc)
+    
     url = 'jdbc:postgresql://ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
     properties = {
         "user": "kevin",
         "password": "pw"
     }
-    sqlContext.read.jdbc(url=url, table='<tablename>', properties=properties)
+    # sqlContext.read.jdbc(url=url, table='<tablename>', properties=properties)
     rev_df = sqlContext.read.jdbc(url=url, table='usersproducts', properties=properties)
     prod_df = sqlContext.read.jdbc(url=url, table='products', properties=properties)
     cats = ['books', 'electronics', 'moviestv', 'cdsvinyl', 'clothingshoesjewelry', 'homekitchen', 'kindlestore', 'sportsoutdoors', 'cellphonesaccessories', 'healthpersonalcare', 'toysgames', 'videogames', 'toolshomeimprovement', 'beauty', 'appsforandroid', 'officeproducts', 'petsupplies', 'automotive', 'grocerygourmetfood', 'patiolawngarden', 'baby', 'digitalmusic', 'musicalinstruments', 'amazoninstantvideo']
