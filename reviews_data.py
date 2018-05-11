@@ -92,6 +92,10 @@ class ReviewsData:
             options(header='true', inferSchema='true').\
             load(path)
 
+    def saveUserProduct(self):
+        df = self.df.select("reviewerid", "asin")
+        df.write.jdbc(url=postgres_url, table='usersproducts', mode='overwrite', properties=postgres_properties)
+
     def transform(self):
         # polarity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
         # subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
@@ -231,12 +235,13 @@ if __name__ == "__main__":
    # reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Clothing_Shoes_and_Jewelry_5.json")
    # products_path = get_s3_path(BUCKET, "product", "meta_Clothing_Shoes_and_Jewelry.json")
     reviewsData = ReviewsData(reviews_path, conf, sc)
-    reviewsData.transform()
+    # reviewsData.transform()
+    reviewsData.saveUserProduct()
 
-    productsData = ProductData(products_path, conf, sc)
-    productsData.main()
+    # productsData = ProductData(products_path, conf, sc)
+    # productsData.main()
 
-    joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
+    # joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
 
 
 
