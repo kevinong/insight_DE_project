@@ -69,7 +69,7 @@ def getPosSubGraph(productid):
     user_names = q.getRelevantUsers(productid)
     user_data = q.getUsersData(user_names)
     pos = []
-    helpful = []
+    sub = []
     user_id = []
     for u in user_data:
         user_id.append(u[0])
@@ -86,7 +86,7 @@ def getPosSubGraph(productid):
         ],
         'layout': go.Layout(
             xaxis = {'title': 'Positivity'},
-            yaxis = {'title': 'Helpful'}),
+            yaxis = {'title': 'Subjectivity'}),
     }
 
 
