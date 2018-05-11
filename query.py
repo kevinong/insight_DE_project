@@ -20,24 +20,24 @@ def fetchData(command):
     return rows
 
 def getAllProducts():
-    command = "SELECT productid, productname from products LIMIT 500"
+    command = "SELECT productid, productname from products2 LIMIT 500"
     return fetchData(command)
 
 def getRelevantUsers(productid):
-    command = "SELECT categories FROM products WHERE productid = \'{}\'".format(productid)
+    command = "SELECT categories FROM products2 WHERE productid = \'{}\'".format(productid)
     cats = fetchData(command)[0][0]
     order = ' DESC, '.join(reversed(cats)) + ' DESC '
-    command = "SELECT reviewerid FROM joined ORDER BY {} LIMIT 100".format(order)
+    command = "SELECT reviewerid FROM joined2 ORDER BY {} LIMIT 100".format(order)
     return fetchData(command)
 
 def getUsersData(users_list):
     users_list_str = ','.join([ '\'' + t[0] + '\'' for t in users_list])
-    command = "SELECT * FROM users WHERE reviewerid in ({}) ORDER BY count".format(users_list_str)
+    command = "SELECT * FROM users2 WHERE reviewerid in ({}) ORDER BY count".format(users_list_str)
     return fetchData(command)
 
 
 if __name__ == "__main__":
-    command = "SELECT * FROM products LIMIT 1"
+    command = "SELECT * FROM products2 LIMIT 1"
     rows = fetchData(command)
     print rows
     prod_name = rows[0][0]
