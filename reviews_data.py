@@ -109,7 +109,7 @@ class ReviewsData:
         #                     .withColumn("pos_review_count", pos_count_udf(self.df.polarity))\
         #                     .withColumn("neg_review_count", neg_count_udf(self.df.polarity))
 
-        self.user_df = self.df.groupby("reviewerid").agg(functions.count("overall").alias("avg_star"), \
+        self.user_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
                                                                functions.count("overall").alias('count'),\
                                                                functions.sum("helpful_vote").alias("helpful"), \
                                                                functions.sum("unhelpful_vote").alias("unhelpful"))
