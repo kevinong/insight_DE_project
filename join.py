@@ -65,44 +65,111 @@ def createTable(distincts):
             conn.close()
             print("closed the connection")
 
-def joinDF(rev_df, prod_df):
-    print 'prod before join'
-    prod_df.show(10, False)
+def createTableFilter(distincts, table_name):
+    fields = " int, ".join(distincts) + ' int'
+    print 'CREATING TABLE\n'
+    print fields
+
+    # table_name = "joined" + cat
+    command = "CREATE TABLE IF NOT EXISTS {} (reviewerid text PRIMARY KEY, {});".format(table_name, fields)
+
+    postgres_url = 'postgresql://kevin:pw@ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
+
+    conn = None
+
+    try:
+        # connect to the PostgreSQL server
+        conn = psycopg2.connect(postgres_url)
+        cur = conn.cursor()
+        # create table one by one
+        print("got connection")
+       # for command in commands:
+        print command
+        cur.execute(command)
+        print("executed command")
+        # close communication with the PostgreSQL database server
+        cur.close()
+        print("closed the cursor")
+        # commit the changes
+        conn.commit()
+        print("committed the connection")
+    except (Exception) as error:
+        print(error)
+        raise error
+    finally:
+        if conn is not None:
+            conn.close()
+            print("closed the connection")
+
+def joinDFFilter(rev_df, prod_df, cat):
+    table_name = "joined" + cat
+    prod_df = prod_df.filter(functions.array_contains("categories", cat))
     joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.productid)
-
     joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories").alias("categories"))
-
-    print 'first join'
-    joined_df.show(10)
-
     flat2_udf = functions.udf(flat2, ArrayType(StringType()))
     joined_df = joined_df.withColumn("categories", flat2_udf(joined_df.categories))
-
-    print 'joined after flat2'
-    joined_df.show(10)
-
     joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
-
-    print 'joined after flatmap'
-    joined_df.show(10)
-
-    print "distinct cats: \n", joined_df.select("category").distinct().count()
-    
     distincts = [i.category for i in joined_df.select('category').distinct().collect()]
-    print "DISTINCT CATEGORIES \n"
-    print distincts
-
+    createTableFilter(distincts, table_name)
     joined_df = joined_df.groupby("reviewerid").pivot("category").count()
     joined_df = joined_df.na.fill(0)
+    joined_df.write.jdbc(url=postgres_url, table=table_name, mode='overwrite', properties=postgres_properties)
+    return
 
-    createTable(distincts)
-    # joined_df = joined_df.drop("categories")
-    # joined_df.printSchema()
-    joined_df.show(10)
-    # joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
-    joined_df.write.jdbc(url=postgres_url, table='joined', mode='overwrite', properties=postgres_properties)
+def joinDF2(rev_df, prod_df, cats):
+    for cat in cats:
+        joinDFFilter(rev_df, prod_df, cat)
+
+# def joinDF(rev_df, prod_df):
+#     print 'prod before join'
+#     prod_df.show(10, False)
 
 
-    return joined_df
+#     joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.productid)
+
+#     joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories").alias("categories"))
+
+#     print 'first join'
+#     joined_df.show(10)
+
+#     flat2_udf = functions.udf(flat2, ArrayType(StringType()))
+#     joined_df = joined_df.withColumn("categories", flat2_udf(joined_df.categories))
+
+#     print 'joined after flat2'
+#     joined_df.show(10)
+
+#     joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
+
+#     print 'joined after flatmap'
+#     joined_df.show(10)
+
+#     print "distinct cats: \n", joined_df.select("category").distinct().count()
+    
+#     distincts = [i.category for i in joined_df.select('category').distinct().collect()]
+#     print "DISTINCT CATEGORIES \n"
+#     print distincts
+
+#     joined_df = joined_df.groupby("reviewerid").pivot("category").count()
+#     joined_df = joined_df.na.fill(0)
+
+#     createTable(distincts)
+#     # joined_df = joined_df.drop("categories")
+#     # joined_df.printSchema()
+#     joined_df.show(10)
+#     # joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
+#     joined_df.write.jdbc(url=postgres_url, table='joined', mode='overwrite', properties=postgres_properties)
+
+
+#     return joined_df
 
 if __name__ == "__main__":
+    url = 'jdbc:postgresql://ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
+    properties = {
+        "user": "kevin",
+        "password": "pw"
+    }
+    sqlContext.read.jdbc(url=url, table='<tablename>', properties=properties)
+    rev_df = sqlContext.read.jdbc(url=url, table='usersproducts', properties=properties)
+    prod_df = sqlContext.read.jdbc(url=url, table='products', properties=properties)
+    cats = ['books', 'electronics', 'moviestv', 'cdsvinyl', 'clothingshoesjewelry', 'homekitchen', 'kindlestore', 'sportsoutdoors', 'cellphonesaccessories', 'healthpersonalcare', 'toysgames', 'videogames', 'toolshomeimprovement', 'beauty', 'appsforandroid', 'officeproducts', 'petsupplies', 'automotive', 'grocerygourmetfood', 'patiolawngarden', 'baby', 'digitalmusic', 'musicalinstruments', 'amazoninstantvideo']
+    joinDF2(rev_df, prod_df, cats)
