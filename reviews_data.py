@@ -87,38 +87,38 @@ class ReviewsData:
             load(path)
 
     def transform(self):
-        polarity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
-        subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
+        # polarity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
+        # subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
 
-        pos_polarity_udf = functions.udf(lambda pol: pol if pol > 0 else 0.0, FloatType())
-        neg_polarity_udf = functions.udf(lambda pol: pol if pol < 0 else 0.0, FloatType())
+        # pos_polarity_udf = functions.udf(lambda pol: pol if pol > 0 else 0.0, FloatType())
+        # neg_polarity_udf = functions.udf(lambda pol: pol if pol < 0 else 0.0, FloatType())
         
-        pos_count_udf = functions.udf(lambda pol: 1 if pol > 0 else 0, IntegerType())
-        neg_count_udf = functions.udf(lambda pol: 1 if pol < 0 else 0, IntegerType())
+        # pos_count_udf = functions.udf(lambda pol: 1 if pol > 0 else 0, IntegerType())
+        # neg_count_udf = functions.udf(lambda pol: 1 if pol < 0 else 0, IntegerType())
 
         self.df = self.df\
-                            .withColumn("polarity", polarity_udf(self.df.reviewText))\
-                            .withColumn("subjectivity", subjectivity_udf(self.df.reviewText))\
                             .withColumn("helpful_vote", self.df.helpful[0])\
                             .withColumn("unhelpful_vote", self.df.helpful[1])
+                            # .withColumn("polarity", polarity_udf(self.df.reviewText))\
+                            # .withColumn("subjectivity", subjectivity_udf(self.df.reviewText))\
 
-        self.df = self.df\
-                            .withColumn("pos_polarity", pos_polarity_udf(self.df.polarity))\
-                            .withColumn("neg_polarity", neg_polarity_udf(self.df.polarity))\
-                            .withColumnRenamed("reviewerID", "reviewerid")\
-                            .withColumn("pos_review_count", pos_count_udf(self.df.polarity))\
-                            .withColumn("neg_review_count", neg_count_udf(self.df.polarity))
+        # self.df = self.df\
+        #                     .withColumn("pos_polarity", pos_polarity_udf(self.df.polarity))\
+        #                     .withColumn("neg_polarity", neg_polarity_udf(self.df.polarity))\
+        #                     .withColumnRenamed("reviewerID", "reviewerid")\
+        #                     .withColumn("pos_review_count", pos_count_udf(self.df.polarity))\
+        #                     .withColumn("neg_review_count", neg_count_udf(self.df.polarity))
 
-        self.user_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
+        self.user_df = self.df.groupby("reviewerid").agg(functions.count("overall").alias("avg_star"), \
                                                                functions.count("overall").alias('count'),\
                                                                functions.sum("helpful_vote").alias("helpful"), \
-                                                               functions.sum("unhelpful_vote").alias("unhelpful"), \
-                                                               functions.avg("polarity").alias("avg_pol"), \
-                                                               functions.sum("pos_polarity").alias("pos"), \
-                                                               functions.sum("pos_review_count").alias("pos_review_count"),\
-                                                               functions.sum("neg_polarity").alias("neg"),\
-                                                               functions.sum("neg_review_count").alias("neg_review_count"),\
-                                                               functions.avg("subjectivity").alias("subjectivity"))
+                                                               functions.sum("unhelpful_vote").alias("unhelpful"))
+                                                               # functions.avg("polarity").alias("avg_pol"), \
+                                                               # functions.sum("pos_polarity").alias("pos"), \
+                                                               # functions.sum("pos_review_count").alias("pos_review_count"),\
+                                                               # functions.sum("neg_polarity").alias("neg"),\
+                                                               # functions.sum("neg_review_count").alias("neg_review_count"),\
+                                                               # functions.avg("subjectivity").alias("subjectivity"))
                                                                # functions.collect_set("asin").alias("products"),\
                                                                # functions.collect_set("categories").alias("categories"))
         self.user_df.write.jdbc(url=postgres_url, table='users', mode='overwrite', properties=postgres_properties)
@@ -136,9 +136,13 @@ def joinDF(rev_df, prod_df):
 
     flat2_udf = functions.udf(flat2, ArrayType(StringType()))
     joined_df = joined_df.withColumn("categories", flat2_udf(joined_df.categories))
-    joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
 
     print 'joined after flat2'
+    joined_df.show(10)
+
+    joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
+
+    print 'joined after flatmap'
     joined_df.show(10)
 
     print "distinct cats: \n", joined_df.select("category").distinct().count()
@@ -200,14 +204,10 @@ if __name__ == "__main__":
 
     aws_access_key = os.getenv('AWS_ACCESS_KEY_ID', 'default')
     aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY', 'default')
-    # fs = s3fs.S3FileSystem(anon = True)
-    # print(fs.ls('s3a://{}/{}/'.format(BUCKET, 'qa')))
 
 
-    conf = SparkConf().setAppName("test").set("spark.driver.maxResultSize", "2g").set("spark.driver.memory", "3g").set("spark.sql.pivotMaxValues", 1000000)
+    conf = SparkConf().setAppName("amazon").set("spark.driver.maxResultSize", "2g").set("spark.driver.memory", "3g").set("spark.sql.pivotMaxValues", 1000000)
     sc = SparkContext(conf = conf)
-    # sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", aws_access_key)
-    # sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", aws_secret_access_key)
 
     sc._jsc.hadoopConfiguration().set('fs.s3n.awsAccessKeyId', aws_access_key)
     sc._jsc.hadoopConfiguration().set('fs.s3a.awsSecretAccessKey',aws_secret_access_key)
@@ -222,26 +222,14 @@ if __name__ == "__main__":
     reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
     products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
 
-    productsData = ProductData(products_path, conf, sc)
-    productsData.main()
-#    productsData.df
-
-    # prod_df = productsData.df.select("asin", "categories")
-    # print 'show product data'
-    # prod_df.show(10, False)
-
     reviewsData = ReviewsData(reviews_path, conf, sc)
     reviewsData.transform()
 
-    # print 'show review data'
-    # reviewsData.df.select("reviewerID", "asin").show(10)
+    productsData = ProductData(products_path, conf, sc)
+    productsData.main()
 
-    # print 'show joined data'
-    # reviewsData.df = reviewsData.df.withColumnRenamed("reviewerID", "reviewerid")
     joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
-    # joined_df.show(10)
-   # joined_df.select("reviewerid", "categories").show(20, False)
-    # joined_df.write.format("org.apache.spark.sql.cassandra").options(table = "data", keyspace = "amazonreviews").save()
+
 
 
 
