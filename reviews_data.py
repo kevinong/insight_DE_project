@@ -4,7 +4,7 @@ from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, functions
 from pyspark.sql.types import FloatType, ArrayType, StringType, IntegerType
 from cassandra.cluster import Cluster
-
+import re
 import configparser
 import psycopg2
 import sys
@@ -33,8 +33,12 @@ def flat(input_list):
     for sublist in input_list:
         try:
             if sublist is not None:
-                for cat in sublist:
-                    result.append(cat.strip().replace('-','').replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
+                #for cat in sublist:
+                cat = re.sub('[^a-zA-Z]+', '', sublist[0])
+                result.append(cat.strip().lower().encode('ascii'))
+                cat = re.sub('[^a-zA-Z]+', '', sublist[1])
+                result.append(cat.strip().lower().encode('ascii'))
+                    #result.append(cat.strip().replace('-','').replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
                     # result.append(sublist[1].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
         except:
             pass
@@ -67,7 +71,7 @@ class ProductData:
         self.df = self.df.select("asin", "title", "categories").na.drop(subset=["asin"])
 
         print 'prod before flat \n'
-        self.df.show(10, False)
+#        self.df.show(10, False)
 
         flat_udf = functions.udf(flat, ArrayType(StringType()))
         self.df = self.df.withColumn("categories", flat_udf(self.df.categories))\
@@ -75,7 +79,7 @@ class ProductData:
                         .withColumnRenamed("title", "productname")
 
         print 'prod after flat prod\n'
-        self.df.show(10, False)
+ #       self.df.show(10, False)
 
         self.df.write.jdbc(url=postgres_url, table='products', mode='overwrite', properties=postgres_properties)
         print 'prod saved'
@@ -134,19 +138,20 @@ def joinDF(rev_df, prod_df):
     joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories").alias("categories"))
 
     print 'first join'
-    joined_df.show(10)
+  #  joined_df.show(10)
 
     flat2_udf = functions.udf(flat2, ArrayType(StringType()))
     joined_df = joined_df.withColumn("categories", flat2_udf(joined_df.categories))
 
     print 'joined after flat2'
-    joined_df.show(10)
+   # joined_df.show(10)
 
     joined_df = joined_df.rdd.flatMap(lambda (user, cats) : [(user, cat) for cat in cats]).toDF(["reviewerid", "category"])
 
     print 'joined after flatmap'
-    joined_df.show(10)
+    #joined_df.show(10)
 
+    joined_df = joined_df.filter("category != ''")
     print "distinct cats: \n", joined_df.select("category").distinct().count()
     
     distincts = [i.category for i in joined_df.select('category').distinct().collect()]
@@ -159,7 +164,7 @@ def joinDF(rev_df, prod_df):
     createTable(distincts)
     # joined_df = joined_df.drop("categories")
     # joined_df.printSchema()
-    joined_df.show(10)
+    #joined_df.show(10)
     # joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
     joined_df.write.jdbc(url=postgres_url, table='joined', mode='overwrite', properties=postgres_properties)
 
@@ -218,12 +223,13 @@ if __name__ == "__main__":
     reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
     products_path = get_s3_path(BUCKET, "product", "metadata.json")
 
-#    reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Toys_and_Games.json")
-   # products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
+    #reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Toys_and_Games.json")
+    #products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
 
-    reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
-    products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
-
+    #reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
+    #products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
+   # reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Clothing_Shoes_and_Jewelry_5.json")
+   # products_path = get_s3_path(BUCKET, "product", "meta_Clothing_Shoes_and_Jewelry.json")
     reviewsData = ReviewsData(reviews_path, conf, sc)
     reviewsData.transform()
 

@@ -20,13 +20,13 @@ def fetchData(command):
     return rows
 
 def getAllProducts():
-    command = "SELECT productid, productname from products LIMIT 100"
+    command = "SELECT productid, productname from products LIMIT 500"
     return fetchData(command)
 
 def getRelevantUsers(productid):
     command = "SELECT categories FROM products WHERE productid = \'{}\'".format(productid)
     cats = fetchData(command)[0][0]
-    order = ' DESC '.join(cats) + ' DESC '
+    order = ' DESC, '.join(reversed(cats)) + ' DESC '
     command = "SELECT reviewerid FROM joined ORDER BY {} LIMIT 100".format(order)
     return fetchData(command)
 
@@ -41,10 +41,10 @@ if __name__ == "__main__":
     rows = fetchData(command)
     print rows
     prod_name = rows[0][0]
-    cats = rows[0][1]
+    cats = rows[0][2]
     print prod_name, '\n', cats
 
-    print ' DESC '.join(cats) + ' DESC '
+    print ' DESC, '.join(cats) + ' DESC '
 
     rel_users = getRelevantUsers(prod_name)
     print(rel_users)
