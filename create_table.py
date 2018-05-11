@@ -12,7 +12,8 @@ session = cluster.connect()
 session.execute('USE ' + CASSANDRA_NAMESPACE)
 
 session.execute('DROP TABLE IF EXISTS userdata;')
-session.execute('CREATE TABLE userdata (reviewerid text, avg_star float, count int, helpful int, unhelpful int, avg_pol float, pos float, pos_review_count int, neg float, neg_review_count int, subjectivity float, PRIMARY KEY (reviewerid));')
+session.execute('CREATE TABLE userdata (reviewerid text, avg_star float, count int, helpful int, unhelpful int, PRIMARY KEY (reviewerid));')
+# session.execute('CREATE TABLE userdata (reviewerid text, avg_star float, count int, helpful int, unhelpful int, avg_pol float, pos float, pos_review_count int, neg float, neg_review_count int, subjectivity float, PRIMARY KEY (reviewerid));')
 session.execute('DROP TABLE IF EXISTS productdata;')
 session.execute('CREATE TABLE productdata (productid text, categories set<text>, PRIMARY KEY (productid));')
 
