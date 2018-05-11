@@ -40,6 +40,21 @@ def flat(input_list):
 
     return result
 
+def flat2(input_list):
+    result = []
+    if input_list is None:
+        return result
+    for sublist in input_list:
+        try:
+            if sublist is not None:
+                for val in sublist:
+                    result.append(val.strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
+                # result.append(sublist[1].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
+        except:
+            pass
+
+    return result
+
 class ProductData:
     def __init__(self, path, conf, sc):
         sqlContext = SQLContext(sc)
