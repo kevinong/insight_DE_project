@@ -26,7 +26,7 @@ def getAllProducts():
 def getRelevantUsers(productid):
     command = "SELECT categories FROM products WHERE productid = \'{}\'".format(productid)
     cats = fetchData(command)[0][0]
-    command = "SELECT reviewerid FROM joined ORDER BY {} DESC, {} DESC LIMIT 10".format(cats[0],cats[1])
+    command = "SELECT reviewerid FROM joined ORDER BY {} DESC LIMIT 10".format(cats[0])
     return fetchData(command)
 
 def getUsersData(users_list):

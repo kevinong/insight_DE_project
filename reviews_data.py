@@ -34,7 +34,7 @@ def flat(input_list):
         try:
             if sublist is not None:
                 result.append(sublist[0].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
-                result.append(sublist[1].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
+                # result.append(sublist[1].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
         except:
             pass
 
