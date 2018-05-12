@@ -16,7 +16,7 @@ app = dash.Dash(__name__, server = server)
 categories = ['', 'books', 'electronics', 'moviestv', 'cdsvinyl', 'clothingshoesjewelry', 'homekitchen', 'kindlestore', 'sportsoutdoors', 'cellphonesaccessories', 'healthpersonalcare', 'toysgames', 'videogames', 'toolshomeimprovement', 'beauty', 'appsforandroid', 'officeproducts', 'petsupplies', 'automotive', 'grocerygourmetfood', 'patiolawngarden', 'baby', 'digitalmusic', 'musicalinstruments', 'amazoninstantvideo']
 category_dropdown = dcc.Dropdown(
     id = "category_dropdown",
-    options = [{"label": categories, "value": categories}],
+    options = [{"label": c, "value": c} for c in categories],
     placeholder = "Select a category"
 )
 
