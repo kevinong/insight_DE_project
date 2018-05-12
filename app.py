@@ -13,19 +13,19 @@ import query as q
 server = Flask(__name__)
 app = dash.Dash(__name__, server = server)
 
-categories = cats = ['', 'books', 'electronics', 'moviestv', 'cdsvinyl', 'clothingshoesjewelry', 'homekitchen', 'kindlestore', 'sportsoutdoors', 'cellphonesaccessories', 'healthpersonalcare', 'toysgames', 'videogames', 'toolshomeimprovement', 'beauty', 'appsforandroid', 'officeproducts', 'petsupplies', 'automotive', 'grocerygourmetfood', 'patiolawngarden', 'baby', 'digitalmusic', 'musicalinstruments', 'amazoninstantvideo']
+categories = ['', 'books', 'electronics', 'moviestv', 'cdsvinyl', 'clothingshoesjewelry', 'homekitchen', 'kindlestore', 'sportsoutdoors', 'cellphonesaccessories', 'healthpersonalcare', 'toysgames', 'videogames', 'toolshomeimprovement', 'beauty', 'appsforandroid', 'officeproducts', 'petsupplies', 'automotive', 'grocerygourmetfood', 'patiolawngarden', 'baby', 'digitalmusic', 'musicalinstruments', 'amazoninstantvideo']
 category_dropdown = dcc.Dropdown(
     id = "category_dropdown",
     options = [{"label": categories, "value": categories}],
     placeholder = "Select a category"
 )
 
-all_products = q.getAllProducts()
-product_dropdown = dcc.Dropdown(
-    id = "product_dropdown",
-    options = [{"label": p[1], "value": p[0]} for p in all_products],
-    placeholder = "Select a product"
-)
+# all_products = q.getAllProducts()
+# product_dropdown = dcc.Dropdown(
+#     id = "product_dropdown",
+#     options = [{"label": p[1], "value": p[0]} for p in all_products],
+#     placeholder = "Select a product"
+# )
 
 app.layout = html.Div(children=[
     html.H1(children='Find the right users for a product'),
@@ -35,7 +35,7 @@ app.layout = html.Div(children=[
     '''),
     html.Label("Products"),
     category_dropdown,
-    dcc.Dropdown(id='product_dropdown')
+    dcc.Dropdown(id='product_dropdown', placeholder = "Select a product"),
     # product_dropdown,
 
     dcc.Graph(id='star_help_graph'),
@@ -48,11 +48,7 @@ app.layout = html.Div(children=[
     [dash.dependencies.Input('category_dropdown', 'value')])
 def getProductDropdown(cat):
     all_products = q.getAllProducts(cat)
-    product_dropdown = dcc.Dropdown(
-    id = "product_dropdown",
-    options = [{"label": p[1], "value": p[0]} for p in all_products],
-    placeholder = "Select a product"
-)
+    return [{"label": p[1], "value": p[0]} for p in all_products]
 
 @app.callback(
     dash.dependencies.Output('star_help_graph', 'figure'),
