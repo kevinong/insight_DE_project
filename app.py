@@ -55,14 +55,14 @@ def getStarHelpGraph(productid):
                 y = helpful,
                 text = user_id,
                 mode = 'markers',
-                opacity = 0.7,
+                opacity = 0.85,
                 marker = {
-                    'size': 10
+                    'size': 12
                 }
             )
         ],
         'layout': go.Layout(
-            font = {'size': 24}
+            font = {'size': 18},
             xaxis = {'title': 'Average Star Rating'},
             yaxis = {'title': 'Average Helpful Votes'},
             hovermode = 'closest'),
