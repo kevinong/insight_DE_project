@@ -23,7 +23,8 @@ def flat2(input_list):
         try:
             if sublist is not None:
                 for val in sublist:
-                    result.append(val.strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
+                    result.append(val)
+                     # result.append(val.strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
                 # result.append(sublist[1].strip().replace(',','').replace('&', '').replace(' ', '_').lower().encode('ascii'))
         except:
             pass
@@ -163,7 +164,7 @@ def joinDF2(rev_df, prod_df, cats):
 #     return joined_df
 
 if __name__ == "__main__":
-    conf = SparkConf().setAppName("amazon").set("spark.driver.maxResultSize", "2g").set("spark.driver.memory", "3g").set("spark.sql.pivotMaxValues", 1000000)
+    conf = SparkConf().setAppName("amazon").set("spark.executor.memory", "10g").set("spark.driver.maxResultSize", "10g").set("spark.driver.memory", "10g").set("spark.sql.pivotMaxValues", 500000)
     sc = SparkContext(conf = conf)
 
     sqlContext = SQLContext(sc)
@@ -176,5 +177,6 @@ if __name__ == "__main__":
     # sqlContext.read.jdbc(url=url, table='<tablename>', properties=properties)
     rev_df = sqlContext.read.jdbc(url=url, table='usersproducts', properties=properties)
     prod_df = sqlContext.read.jdbc(url=url, table='products', properties=properties)
-    cats = ['books', 'electronics', 'moviestv', 'cdsvinyl', 'clothingshoesjewelry', 'homekitchen', 'kindlestore', 'sportsoutdoors', 'cellphonesaccessories', 'healthpersonalcare', 'toysgames', 'videogames', 'toolshomeimprovement', 'beauty', 'appsforandroid', 'officeproducts', 'petsupplies', 'automotive', 'grocerygourmetfood', 'patiolawngarden', 'baby', 'digitalmusic', 'musicalinstruments', 'amazoninstantvideo']
+   # cats = ['books', 'electronics', 'moviestv', 'cdsvinyl', 'clothingshoesjewelry', 'homekitchen', 'kindlestore', 'sportsoutdoors', 'cellphonesaccessories', 'healthpersonalcare', 'toysgames', 'videogames', 'toolshomeimprovement', 'beauty', 'appsforandroid', 'officeproducts', 'petsupplies', 'automotive', 'grocerygourmetfood', 'patiolawngarden', 'baby', 'digitalmusic', 'musicalinstruments', 'amazoninstantvideo']
+    cats = ['musicalinstruments', 'automotive']
     joinDF2(rev_df, prod_df, cats)
