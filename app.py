@@ -13,6 +13,13 @@ import query as q
 server = Flask(__name__)
 app = dash.Dash(__name__, server = server)
 
+categories = cats = ['', 'books', 'electronics', 'moviestv', 'cdsvinyl', 'clothingshoesjewelry', 'homekitchen', 'kindlestore', 'sportsoutdoors', 'cellphonesaccessories', 'healthpersonalcare', 'toysgames', 'videogames', 'toolshomeimprovement', 'beauty', 'appsforandroid', 'officeproducts', 'petsupplies', 'automotive', 'grocerygourmetfood', 'patiolawngarden', 'baby', 'digitalmusic', 'musicalinstruments', 'amazoninstantvideo']
+category_dropdown = dcc.Dropdown(
+    id = "category_dropdown",
+    options = [{"label": categories, "value": categories}],
+    placeholder = "Select a category"
+)
+
 all_products = q.getAllProducts()
 product_dropdown = dcc.Dropdown(
     id = "product_dropdown",
@@ -27,7 +34,9 @@ app.layout = html.Div(children=[
         Amazon User Review Data
     '''),
     html.Label("Products"),
-    product_dropdown,
+    category_dropdown,
+    dcc.Dropdown(id='product_dropdown')
+    # product_dropdown,
 
     dcc.Graph(id='star_help_graph'),
  #   dcc.Graph(id='pos_sub_graph')
@@ -35,11 +44,23 @@ app.layout = html.Div(children=[
 ])
 
 @app.callback(
+    dash.dependencies.Output('product_dropdown', 'options'),
+    [dash.dependencies.Input('category_dropdown', 'value')])
+def getProductDropdown(cat):
+    all_products = q.getAllProducts(cat)
+    product_dropdown = dcc.Dropdown(
+    id = "product_dropdown",
+    options = [{"label": p[1], "value": p[0]} for p in all_products],
+    placeholder = "Select a product"
+)
+
+@app.callback(
     dash.dependencies.Output('star_help_graph', 'figure'),
-    [dash.dependencies.Input('product_dropdown', 'value')])
-def getStarHelpGraph(productid):
-    user_names = q.getRelevantUsers(productid)
-    user_data = q.getUsersData(user_names)
+    [dash.dependencies.Input('category_dropdown', 'value'),\
+     dash.dependencies.Input('product_dropdown', 'value')])
+def getStarHelpGraph(cat, productid):
+    user_names = q.getRelevantUsers(productid, cat)
+    user_data = q.getUsersData(user_names, cat)
     star = []
     helpful = []
     user_id = []

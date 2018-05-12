@@ -19,20 +19,22 @@ def fetchData(command):
             conn.close()
     return rows
 
-def getAllProducts():
-    command = "SELECT productid, productname from products2 LIMIT 500"
+def getAllProducts(cat):
+    # command = "SELECT productid, productname from products2 LIMIT 500"
+    command = "SELECT productid, productname from {} LIMIT 500".format(cat + "products2")
     return fetchData(command)
 
-def getRelevantUsers(productid):
-    command = "SELECT categories FROM products2 WHERE productid = \'{}\'".format(productid)
+def getRelevantUsers(productid, cat):
+    # command = "SELECT categories FROM products2 WHERE productid = \'{}\'".format(productid)
+    command = "SELECT categories FROM {} WHERE productid = \'{}\'".format(cat + "products2", productid)
     cats = fetchData(command)[0][0]
     order = ' DESC, '.join(reversed(cats)) + ' DESC '
-    command = "SELECT reviewerid FROM joined2 ORDER BY {} LIMIT 100".format(order)
+    command = "SELECT reviewerid FROM {} ORDER BY {} LIMIT 100".format(cat + "joined2", order)
     return fetchData(command)
 
-def getUsersData(users_list):
+def getUsersData(users_list, cat):
     users_list_str = ','.join([ '\'' + t[0] + '\'' for t in users_list])
-    command = "SELECT * FROM users2 WHERE reviewerid in ({}) ORDER BY count".format(users_list_str)
+    command = "SELECT * FROM {} WHERE reviewerid in ({}) ORDER BY count".format(cat + "users2", users_list_str)
     return fetchData(command)
 
 
