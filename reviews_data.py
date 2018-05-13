@@ -17,6 +17,31 @@ from util import get_s3_path
 #import products_data
 
 
+CATEGORIES = {'books': 'Books', 
+              'electronics': 'Electronics', 
+              'moviestv': 'Movies_and_TV', 
+              'cdsvinyl': 'CDs_and_Vinyl', 
+              'clothingshoesjewelry': 'Clothing_Shoes_and_Jewelry', 
+              'homekitchen': 'Home_and_Kitchen', 
+              'kindlestore': 'Kindle_Store', 
+              'sportsoutdoors': 'Sports_and_Outdoors', 
+              'cellphonesaccessories': 'Cell_Phones_and_Accessories', 
+              'healthpersonalcare': 'Health_and_Personal_Care', 
+              'toysgames': 'Toys_and_Games', 
+              'videogames': 'Video_Games', 
+              'toolshomeimprovement': 'Tools_and_Home_Improvement', 
+              'beauty': 'Beauty', 
+              'appsforandroid': 'Apps_for_Android', 
+              'officeproducts': 'Office_Products', 
+              'petsupplies': 'Pet_Supplies', 
+              'automotive': 'Automotive', 
+              'grocerygourmetfood': 'Grocery_and_Gourmet_Food', 
+              'patiolawngarden': 'Patio_Lawn_and_Garden', 
+              'baby': 'Baby', 
+              'digitalmusic': 'Digital_Musc', 
+              'musicalinstruments': 'Musical_Instruments', 
+              'amazoninstantvideo': 'Amazon_Instant_Video'}
+
 BUCKET = "amazon-data-insight"
 postgres_url = 'jdbc:postgresql://ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
 postgres_properties = {'user': 'kevin', 'password':'pw'}
@@ -61,7 +86,9 @@ def flat2(input_list):
     return result
 
 class ProductData:
-    def __init__(self, path, conf, sc):
+    def __init__(self, category, conf, sc):
+        path = get_s3_path(BUCKET, "product", "meta_{}.json".format(CATEGORIES[category]))
+        self.category = category
         sqlContext = SQLContext(sc)
         self.df = sqlContext.read.format('json').\
             options(header='true', inferSchema='true').\
@@ -70,7 +97,7 @@ class ProductData:
     def main(self):
         self.df = self.df.select("asin", "title", "categories").na.drop(subset=["asin"])
 
-        print 'prod before flat \n'
+        # print 'prod before flat \n'
 #        self.df.show(10, False)
 
         flat_udf = functions.udf(flat, ArrayType(StringType()))
@@ -81,62 +108,63 @@ class ProductData:
         print 'prod after flat prod\n'
  #       self.df.show(10, False)
 
-        self.df.write.jdbc(url=postgres_url, table='products2', mode='overwrite', properties=postgres_properties)
+        self.df.write.jdbc(url=postgres_url, table='{}products2'.format(self.category), mode='overwrite', properties=postgres_properties)
         print 'prod saved'
 
 
 class ReviewsData:
-    def __init__(self, path, conf, sc):
+    def __init__(self, category, conf, sc):
+        self.category = category
+        path = get_s3_path(BUCKET, "reviews", "reviews_{}.json".format(CATEGORIES[category]))
         sqlContext = SQLContext(sc)
         self.df = sqlContext.read.format('json').\
             options(header='true', inferSchema='true').\
             load(path)
 
-    def saveUserProduct(self):
-        df = self.df.select("reviewerid", "asin")
-        df.write.jdbc(url=postgres_url, table='usersproducts', mode='overwrite', properties=postgres_properties)
+    # def saveUserProduct(self):
+        # df = self.df.select("reviewerid", "asin")
+        # df.write.jdbc(url=postgres_url, table='usersproducts', mode='overwrite', properties=postgres_properties)
 
     def transform(self):
-        # polarity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
-        # subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
+        polarity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.polarity, FloatType())
+        subjectivity_udf = functions.udf(lambda reviewText: TextBlob(reviewText).sentiment.subjectivity, FloatType())
 
-        # pos_polarity_udf = functions.udf(lambda pol: pol if pol > 0 else 0.0, FloatType())
-        # neg_polarity_udf = functions.udf(lambda pol: pol if pol < 0 else 0.0, FloatType())
+        pos_polarity_udf = functions.udf(lambda pol: pol if pol > 0 else 0.0, FloatType())
+        neg_polarity_udf = functions.udf(lambda pol: pol if pol < 0 else 0.0, FloatType())
         
-        # pos_count_udf = functions.udf(lambda pol: 1 if pol > 0 else 0, IntegerType())
-        # neg_count_udf = functions.udf(lambda pol: 1 if pol < 0 else 0, IntegerType())
+        pos_count_udf = functions.udf(lambda pol: 1 if pol > 0 else 0, IntegerType())
+        neg_count_udf = functions.udf(lambda pol: 1 if pol < 0 else 0, IntegerType())
 
         self.df = self.df\
                             .withColumn("helpful_vote", self.df.helpful[0])\
                             .withColumn("unhelpful_vote", self.df.helpful[1])
-                            # .withColumn("polarity", polarity_udf(self.df.reviewText))\
-                            # .withColumn("subjectivity", subjectivity_udf(self.df.reviewText))\
+                            .withColumn("polarity", polarity_udf(self.df.reviewText))\
+                            .withColumn("subjectivity", subjectivity_udf(self.df.reviewText))\
 
-        # self.df = self.df\
-        #                     .withColumn("pos_polarity", pos_polarity_udf(self.df.polarity))\
-        #                     .withColumn("neg_polarity", neg_polarity_udf(self.df.polarity))\
-        #                     .withColumnRenamed("reviewerID", "reviewerid")\
-        #                     .withColumn("pos_review_count", pos_count_udf(self.df.polarity))\
-        #                     .withColumn("neg_review_count", neg_count_udf(self.df.polarity))
+        self.df = self.df\
+                            .withColumn("pos_polarity", pos_polarity_udf(self.df.polarity))\
+                            .withColumn("neg_polarity", neg_polarity_udf(self.df.polarity))\
+                            .withColumnRenamed("reviewerID", "reviewerid")\
+                            .withColumn("pos_review_count", pos_count_udf(self.df.polarity))\
+                            .withColumn("neg_review_count", neg_count_udf(self.df.polarity))
 
         self.user_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
                                                                functions.count("overall").alias('count'),\
                                                                functions.sum("helpful_vote").alias("helpful"), \
                                                                functions.sum("unhelpful_vote").alias("unhelpful"))
-                                                               # functions.avg("polarity").alias("avg_pol"), \
-                                                               # functions.sum("pos_polarity").alias("pos"), \
-                                                               # functions.sum("pos_review_count").alias("pos_review_count"),\
-                                                               # functions.sum("neg_polarity").alias("neg"),\
-                                                               # functions.sum("neg_review_count").alias("neg_review_count"),\
-                                                               # functions.avg("subjectivity").alias("subjectivity"))
-                                                               # functions.collect_set("asin").alias("products"),\
-                                                               # functions.collect_set("categories").alias("categories"))
-        self.user_df.write.jdbc(url=postgres_url, table='users2', mode='overwrite', properties=postgres_properties)
+                                                               functions.avg("polarity").alias("avg_pol"), \
+                                                               functions.sum("pos_polarity").alias("pos"), \
+                                                               functions.sum("pos_review_count").alias("pos_review_count"),\
+                                                               functions.sum("neg_polarity").alias("neg"),\
+                                                               functions.sum("neg_review_count").alias("neg_review_count"),\
+                                                               functions.avg("subjectivity").alias("subjectivity"))
+
+        self.user_df.write.jdbc(url=postgres_url, table='{}users2'.format(self.cat), mode='overwrite', properties=postgres_properties)
 
 
-def joinDF(rev_df, prod_df):
+def joinDF(rev_df, prod_df, category):
     print 'prod before join'
-    prod_df.show(10, False)
+    # prod_df.show(10, False)
     joined_df = rev_df.join(prod_df, rev_df.asin == prod_df.productid)
 
     joined_df = joined_df.groupby("reviewerid").agg(functions.collect_list("categories").alias("categories"))
@@ -156,31 +184,28 @@ def joinDF(rev_df, prod_df):
     #joined_df.show(10)
 
     joined_df = joined_df.filter("category != ''")
-    print "distinct cats: \n", joined_df.select("category").distinct().count()
+    # print "distinct cats: \n", joined_df.select("category").distinct().count()
     
     distincts = [i.category for i in joined_df.select('category').distinct().collect()]
     print "DISTINCT CATEGORIES \n"
-    print distincts
+    # print distincts
 
     joined_df = joined_df.groupby("reviewerid").pivot("category").count()
     joined_df = joined_df.na.fill(0)
 
     createTable(distincts)
-    # joined_df = joined_df.drop("categories")
-    # joined_df.printSchema()
-    #joined_df.show(10)
-    # joined_df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').options(table = "joineddata", keyspace = "amazonreviews").save()
-    joined_df.write.jdbc(url=postgres_url, table='joined2', mode='overwrite', properties=postgres_properties)
+
+    joined_df.write.jdbc(url=postgres_url, table='{}joined2'.format(category), mode='overwrite', properties=postgres_properties)
 
 
     return joined_df
 
-def createTable(distincts):
+def createTable(distincts, category):
     fields = " int, ".join(distincts) + ' int'
     print 'CREATING TABLE\n'
-    print fields
+    # print fields
 
-    command = "CREATE TABLE IF NOT EXISTS joined2 (reviewerid text PRIMARY KEY, {});".format(fields)
+    command = "CREATE TABLE IF NOT EXISTS " + category + "joined2 (reviewerid text PRIMARY KEY, {});".format(fields)
 
     postgres_url = 'postgresql://kevin:pw@ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
 
@@ -223,25 +248,15 @@ if __name__ == "__main__":
     sc._jsc.hadoopConfiguration().set('fs.s3n.awsAccessKeyId', aws_access_key)
     sc._jsc.hadoopConfiguration().set('fs.s3a.awsSecretAccessKey',aws_secret_access_key)
 
-    # reviews_path = get_s3_path(BUCKET, 'reviews', 'reviews_Clothing_Shoes_and_Jewelry_5.json')
-    reviews_path = get_s3_path(BUCKET, 'reviews', 'complete.json')
-    products_path = get_s3_path(BUCKET, "product", "metadata.json")
 
-    #reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Toys_and_Games.json")
-    #products_path = get_s3_path(BUCKET, "product", "meta_Toys_and_Games.json")
+    for c in CATEGORIES:
+        reviewsData = ReviewsData(c, conf, sc)
+        reviewsData.transform()
 
-    #reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Musical_Instruments_5.json")
-    #products_path = get_s3_path(BUCKET, "product", "meta_Musical_Instruments.json")
-   # reviews_path = get_s3_path(BUCKET, "reviews", "reviews_Clothing_Shoes_and_Jewelry_5.json")
-   # products_path = get_s3_path(BUCKET, "product", "meta_Clothing_Shoes_and_Jewelry.json")
-    reviewsData = ReviewsData(reviews_path, conf, sc)
-    # reviewsData.transform()
-    reviewsData.saveUserProduct()
+        productsData = ProductData(c, conf, sc)
+        productsData.main()
 
-    # productsData = ProductData(products_path, conf, sc)
-    # productsData.main()
-
-    # joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df)
+        joined_df = joinDF(reviewsData.df.select("reviewerid", "asin"), productsData.df, c)
 
 
 
