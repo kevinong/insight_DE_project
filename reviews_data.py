@@ -151,7 +151,7 @@ class ReviewsData:
         self.user_df = self.df.groupby("reviewerid").agg(functions.avg("overall").alias("avg_star"), \
                                                                functions.count("overall").alias('count'),\
                                                                functions.sum("helpful_vote").alias("helpful"), \
-                                                               functions.sum("unhelpful_vote").alias("unhelpful"))
+                                                               functions.sum("unhelpful_vote").alias("unhelpful")\
                                                                functions.avg("polarity").alias("avg_pol"), \
                                                                functions.sum("pos_polarity").alias("pos"), \
                                                                functions.sum("pos_review_count").alias("pos_review_count"),\
