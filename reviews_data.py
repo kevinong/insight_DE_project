@@ -108,7 +108,7 @@ class ProductData:
         print 'prod after flat prod\n'
  #       self.df.show(10, False)
 
-        self.df.write.jdbc(url=postgres_url, table='{}products2'.format(self.category), mode='overwrite', properties=postgres_properties)
+        self.df.write.jdbc(url=postgres_url, table='{}products'.format(self.category), mode='overwrite', properties=postgres_properties)
         print 'prod saved'
 
 
@@ -159,7 +159,7 @@ class ReviewsData:
                                                                functions.sum("neg_review_count").alias("neg_review_count"),\
                                                                functions.avg("subjectivity").alias("subjectivity"))
 
-        self.user_df.write.jdbc(url=postgres_url, table='{}users2'.format(self.cat), mode='overwrite', properties=postgres_properties)
+        self.user_df.write.jdbc(url=postgres_url, table='{}users'.format(self.cat), mode='overwrite', properties=postgres_properties)
 
 
 def joinDF(rev_df, prod_df, category):
@@ -195,7 +195,7 @@ def joinDF(rev_df, prod_df, category):
 
     createTable(distincts)
 
-    joined_df.write.jdbc(url=postgres_url, table='{}joined2'.format(category), mode='overwrite', properties=postgres_properties)
+    joined_df.write.jdbc(url=postgres_url, table='{}joined'.format(category), mode='overwrite', properties=postgres_properties)
 
 
     return joined_df
