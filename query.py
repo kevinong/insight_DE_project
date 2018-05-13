@@ -21,20 +21,20 @@ def fetchData(command):
 
 def getAllProducts(cat):
     # command = "SELECT productid, productname from products2 LIMIT 500"
-    command = "SELECT productid, productname from {} LIMIT 500".format(cat + "products2")
+    command = "SELECT productid, productname from {} LIMIT 500".format(cat + "products")
     return fetchData(command)
 
 def getRelevantUsers(productid, cat):
     # command = "SELECT categories FROM products2 WHERE productid = \'{}\'".format(productid)
-    command = "SELECT categories FROM {} WHERE productid = \'{}\'".format(cat + "products2", productid)
+    command = "SELECT categories FROM {} WHERE productid = \'{}\'".format(cat + "products", productid)
     cats = fetchData(command)[0][0]
     order = ' DESC, '.join(reversed(cats)) + ' DESC '
-    command = "SELECT reviewerid FROM {} ORDER BY {} LIMIT 100".format(cat + "joined2", order)
+    command = "SELECT reviewerid FROM {} ORDER BY {} LIMIT 100".format(cat + "joined", order)
     return fetchData(command)
 
 def getUsersData(users_list, cat):
     users_list_str = ','.join([ '\'' + t[0] + '\'' for t in users_list])
-    command = "SELECT * FROM {} WHERE reviewerid in ({}) ORDER BY count".format(cat + "users2", users_list_str)
+    command = "SELECT * FROM {} WHERE reviewerid in ({}) ORDER BY count".format(cat + "users", users_list_str)
     return fetchData(command)
 
 
