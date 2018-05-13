@@ -159,7 +159,7 @@ class ReviewsData:
                                                                functions.sum("neg_review_count").alias("neg_review_count"),\
                                                                functions.avg("subjectivity").alias("subjectivity"))
 
-        self.user_df.write.jdbc(url=postgres_url, table='{}users'.format(self.cat), mode='overwrite', properties=postgres_properties)
+        self.user_df.write.jdbc(url=postgres_url, table='{}users'.format(self.category), mode='overwrite', properties=postgres_properties)
 
 
 def joinDF(rev_df, prod_df, category):
