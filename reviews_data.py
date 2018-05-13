@@ -137,7 +137,7 @@ class ReviewsData:
 
         self.df = self.df\
                             .withColumn("helpful_vote", self.df.helpful[0])\
-                            .withColumn("unhelpful_vote", self.df.helpful[1])
+                            .withColumn("unhelpful_vote", self.df.helpful[1])\
                             .withColumn("polarity", polarity_udf(self.df.reviewText))\
                             .withColumn("subjectivity", subjectivity_udf(self.df.reviewText))\
 
