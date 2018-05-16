@@ -1,6 +1,6 @@
 import psycopg2
 
-postgres_url = 'postgresql://kevin:pw@ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
+postgres_url = os.getenv('POSTGRES_URL', 'default')
 
 def fetchData(command):
     conn = None
@@ -20,8 +20,7 @@ def fetchData(command):
     return rows
 
 def getAllProducts(cat):
-    # command = "SELECT productid, productname from products2 LIMIT 500"
-    command = "SELECT productid, productname from {} LIMIT 500".format(cat + "products")
+    command = "SELECT productid, productname from {} ".format(cat + "products")
     return fetchData(command)
 
 def getRelevantUsers(productid, cat):
@@ -38,20 +37,4 @@ def getUsersData(users_list, cat):
     return fetchData(command)
 
 
-if __name__ == "__main__":
-    command = "SELECT * FROM products2 LIMIT 1"
-    rows = fetchData(command)
-    print rows
-    prod_name = rows[0][0]
-    cats = rows[0][2]
-    print prod_name, '\n', cats
-
-    print ' DESC, '.join(cats) + ' DESC '
-
-    rel_users = getRelevantUsers(prod_name)
-    print(rel_users)
-
-    user_data = getUsersData(rel_users)
-    for u in user_data:
-        print u
 
