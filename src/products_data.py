@@ -17,7 +17,9 @@ from util import get_s3_path
 
 BUCKET = "amazon-data-insight"
 postgres_url = 'jdbc:postgresql://ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
-postgres_properties = {'user': 'kevin', 'password':'pw'}
+postgres_user = os.getenv('POSTGRES_USER', 'default')
+postgres_pw = os.getenv('POSTGRES_PW', 'default')
+postgres_properties = {'user': postgres_user, 'password':postgres_pw}
 
 
 def flat(input_list):

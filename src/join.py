@@ -70,17 +70,7 @@ def joinDF(rev_df, prod_df, cat):
     joined_df.write.jdbc(url=postgres_url, table=table_name, mode='overwrite', properties=postgres_properties)
     return
 
-if __name__ == "__main__":
-    conf = SparkConf().setAppName("amazon").set("spark.executor.memory", "10g").set("spark.driver.maxResultSize", "10g").set("spark.driver.memory", "10g").set("spark.sql.pivotMaxValues", 500000)
-    sc = SparkContext(conf = conf)
 
-    sqlContext = SQLContext(sc)
-    
-    url = 'jdbc:postgresql://ec2-54-245-66-232.us-west-2.compute.amazonaws.com:5432/insight'
-    properties = {
-        "user": "kevin",
-        "password": "pw"
-    }
    
 if __name__ == "__main__":
 
